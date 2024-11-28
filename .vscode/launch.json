@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run Program",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/project",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "preLaunchTask": "build",
+        }
+    ]
+}
