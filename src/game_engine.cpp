@@ -36,16 +36,16 @@ float lastFrame = 0.0f;
 
 //GUI
 
-int main()
+int StartNewProject()
 {
 
     // glfw: initialize and configure
     // ------------------------------
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
+    //IMGUI_CHECKVERSION(); already did
+    //ImGui::CreateContext(); already did
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     ImGui::StyleColorsDark();
-    glfwInit();
+    //glfwInit(); already did
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -61,8 +61,8 @@ int main()
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
 
-    ImGui_ImplGlfw_InitForOpenGL(window,true);
-    ImGui_ImplOpenGL3_Init("#version 460");
+    //ImGui_ImplGlfw_InitForOpenGL(window,true); already did
+    //ImGui_ImplOpenGL3_Init("#version 460"); already did
 
     // tell GLFW to capture our mouse
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
