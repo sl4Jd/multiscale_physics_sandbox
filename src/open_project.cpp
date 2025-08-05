@@ -3,18 +3,36 @@
 #include "includes/imgui_impl_opengl3.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <string>
+#include <windows.h>
 
 #include "game_engine.h"
 
+using namespace std;
+
+int screenWidth;
+int screenHeight;
+int windowWidth;
+int windowHeight;
+
 void ShowStartWindow() {
-    ImGui::Begin("Start Window", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
-    
-    ImGui::Text("Welcome to My Application!");
+    ImVec2 size = ImGui::GetWindowSize();
+    ImGui::SetNextWindowPos(ImVec2(windowWidth/2-size.x/4, windowHeight/2-size.y/4), ImGuiCond_Always);
+    ImGui::Begin("InvisibleWindow", nullptr,
+        ImGuiWindowFlags_NoTitleBar |
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoMove |
+        ImGuiWindowFlags_NoScrollbar |
+        ImGuiWindowFlags_NoSavedSettings |
+        ImGuiWindowFlags_NoBackground |
+        ImGuiWindowFlags_AlwaysAutoResize);
+
+    ImGui::Text("Game Engine version 0.1.0");
     ImGui::Spacing();
     ImGui::Spacing();
 
     if (ImGui::Button("Start New Project", ImVec2(200, 40))) {
-       StartNewProject();
+        StartNewProject();
     }
 
     ImGui::Spacing();
@@ -41,12 +59,21 @@ int main(int, char**)
     // Setup OpenGL version (3.0+)
     const char* glsl_version = "#version 130";
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode* videoMode = glfwGetVideoMode(primaryMonitor);
+    screenWidth = videoMode->width;
+    screenHeight = videoMode->height;
     // Create window with graphics context
-    GLFWwindow* window = glfwCreateWindow(600, 400, "Start Window Example", NULL, NULL);
+    windowWidth = screenWidth / 2;
+    windowHeight = screenHeight / 2;
+    GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, "engine", NULL, NULL);
     if (window == NULL)
         return 1;
+    int posX = (screenWidth - windowWidth) / 2;
+    int posY = (screenHeight - windowHeight) / 2;
+
+    glfwSetWindowPos(window, posX, posY);
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1); // Enable vsync
 
