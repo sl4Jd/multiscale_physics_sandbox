@@ -7,13 +7,15 @@
 #include <windows.h>
 
 #include "game_engine.h"
-
-using namespace std;
+#include "create_project.h"
+#include "appstate.h"
 
 int screenWidth;
 int screenHeight;
 int windowWidth;
 int windowHeight;
+
+AppState currentAppState = AppState::MainMenu;
 
 void ShowStartWindow() {
     ImVec2 size = ImGui::GetWindowSize();
@@ -32,7 +34,7 @@ void ShowStartWindow() {
     ImGui::Spacing();
 
     if (ImGui::Button("Start New Project", ImVec2(200, 40))) {
-        StartNewProject();
+        currentAppState = AppState::CreateProject;
     }
 
     ImGui::Spacing();
@@ -100,7 +102,11 @@ int main(int, char**)
         ImGui::NewFrame();
 
         // Our Start Window UI
-        ShowStartWindow();
+        if(currentAppState == AppState::MainMenu) {
+            ShowStartWindow();
+        } else if (currentAppState == AppState::CreateProject) {
+            CreateProject();
+        }
 
         // Rendering
         ImGui::Render();

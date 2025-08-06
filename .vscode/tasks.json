@@ -12,6 +12,7 @@
                 "-L${workspaceFolder}/lib",
                 //"${workspaceFolder}/src/main.cpp",
                 "${workspaceFolder}/src/open_project.cpp",
+                "${workspaceFolder}/src/create_project.cpp",
                 "${workspaceFolder}/src/image_implementation.cpp",
                 "${workspaceFolder}/src/includes/imgui.cpp",
                 "${workspaceFolder}/src/includes/imgui_widgets.cpp",
