@@ -18,8 +18,8 @@ int windowHeight;
 AppState currentAppState = AppState::MainMenu;
 
 void ShowStartWindow() {
-    ImVec2 size = ImGui::GetWindowSize();
-    ImGui::SetNextWindowPos(ImVec2(windowWidth/2-size.x/4, windowHeight/2-size.y/4), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(windowWidth, windowHeight), ImGuiCond_Always);
+    ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::Begin("InvisibleWindow", nullptr,
         ImGuiWindowFlags_NoTitleBar |
         ImGuiWindowFlags_NoResize |
@@ -29,23 +29,27 @@ void ShowStartWindow() {
         ImGuiWindowFlags_NoBackground |
         ImGuiWindowFlags_AlwaysAutoResize);
 
+    ImGui::SetCursorPosY(100);
+    ImGui::SetCursorPosX(windowWidth/2 - 250);
     ImGui::Text("Game Engine version 0.1.0");
     ImGui::Spacing();
     ImGui::Spacing();
 
-    if (ImGui::Button("Start New Project", ImVec2(200, 40))) {
+    ImGui::SetCursorPosX(windowWidth/2 - 250);
+    if (ImGui::Button("Start New Project", ImVec2(500, 100))) {
         currentAppState = AppState::CreateProject;
     }
 
     ImGui::Spacing();
 
-    if (ImGui::Button("Load Project", ImVec2(200, 40))) {
+    ImGui::SetCursorPosX(windowWidth/2 - 250);
+    if (ImGui::Button("Load Project", ImVec2(500, 100))) {
         std::cout << "Load Project Clicked" << std::endl;
     }
 
     ImGui::Spacing();
-
-    if (ImGui::Button("Settings", ImVec2(200, 40))) {
+    ImGui::SetCursorPosX(windowWidth/2 - 250);
+    if (ImGui::Button("Settings", ImVec2(500, 100))) {
         std::cout << "Settings Clicked" << std::endl;
     }
 
@@ -87,6 +91,7 @@ int main(int, char**)
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
 
+    ImFont* lucida_big = io.Fonts->AddFontFromFileTTF("src\\fonts\\lucon.ttf", 32.0f);
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);

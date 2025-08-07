@@ -13,7 +13,7 @@ void CreateProject()
 {
     ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetNextWindowSize(ImVec2(windowWidth, windowHeight), ImGuiCond_Always);
-    ImGui::Begin("Create Page", nullptr,
+    ImGui::Begin("Create Project", nullptr,
         ImGuiWindowFlags_NoTitleBar |
         ImGuiWindowFlags_NoResize |
         ImGuiWindowFlags_NoMove |
@@ -21,27 +21,25 @@ void CreateProject()
         ImGuiWindowFlags_NoSavedSettings |
         ImGuiWindowFlags_NoBackground |
         ImGuiWindowFlags_AlwaysAutoResize);
+        
 
-    ImGui::Text("Enter Name:");
+    ImGui::Text("Project Name:");
     ImGui::InputText("##InputName", inputBuffer, IM_ARRAYSIZE(inputBuffer));
 
-    ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 100);  // Adjust 50 to change bottom margin
-    ImGui::SetCursorPosX(50); // Adjust 100 to align from right edge
+    ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 100);
+    ImGui::SetCursorPosX(50);
     if (ImGui::Button("Back", ImVec2(200, 70)))
     {
         currentAppState = AppState::MainMenu;
     }
 
-    // Push Create button to bottom-right corner
-    ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 100);  // Adjust 50 to change bottom margin
-    ImGui::SetCursorPosX(ImGui::GetWindowSize().x - 250); // Adjust 100 to align from right edge
-
+    ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 100);
+    ImGui::SetCursorPosX(ImGui::GetWindowSize().x - 250); 
 
     if (ImGui::Button("Create", ImVec2(200, 70)))
     {
         StartNewProject();
     }
-
     ImGui::End();
 }
 
