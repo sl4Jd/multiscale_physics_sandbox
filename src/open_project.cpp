@@ -8,6 +8,7 @@
 
 #include "game_engine.h"
 #include "create_project.h"
+#include "open_project.h"
 #include "appstate.h"
 
 int screenWidth;
@@ -15,7 +16,11 @@ int screenHeight;
 int windowWidth;
 int windowHeight;
 
+extern bool open_project;
+
 AppState currentAppState = AppState::MainMenu;
+
+GLFWwindow* main_window;
 
 void ShowStartWindow() {
     ImGui::SetNextWindowSize(ImVec2(windowWidth, windowHeight), ImGuiCond_Always);
@@ -31,7 +36,7 @@ void ShowStartWindow() {
 
     ImGui::SetCursorPosY(100);
     ImGui::SetCursorPosX(windowWidth/2 - 250);
-    ImGui::Text("Game Engine version 0.1.0");
+    ImGui::Text("Game Engine version 0.1.1");
     ImGui::Spacing();
     ImGui::Spacing();
 
@@ -73,14 +78,14 @@ int main(int, char**)
     // Create window with graphics context
     windowWidth = screenWidth / 2;
     windowHeight = screenHeight / 2;
-    GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, "engine", NULL, NULL);
-    if (window == NULL)
+    main_window = glfwCreateWindow(windowWidth, windowHeight, "engine", NULL, NULL);
+    if (main_window == NULL)
         return 1;
     int posX = (screenWidth - windowWidth) / 2;
     int posY = (screenHeight - windowHeight) / 2;
 
-    glfwSetWindowPos(window, posX, posY);
-    glfwMakeContextCurrent(window);
+    glfwSetWindowPos(main_window, posX, posY);
+    glfwMakeContextCurrent(main_window);
     glfwSwapInterval(1); // Enable vsync
 
     // Setup Dear ImGui context
@@ -93,11 +98,11 @@ int main(int, char**)
 
     ImFont* lucida_big = io.Fonts->AddFontFromFileTTF("src\\fonts\\lucon.ttf", 32.0f);
     // Setup Platform/Renderer backends
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplGlfw_InitForOpenGL(main_window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
 
     // Main loop
-    while (!glfwWindowShouldClose(window))
+    while (!glfwWindowShouldClose(main_window))
     {
         glfwPollEvents();
 
@@ -116,22 +121,23 @@ int main(int, char**)
         // Rendering
         ImGui::Render();
         int display_w, display_h;
-        glfwGetFramebufferSize(window, &display_w, &display_h);
+        glfwGetFramebufferSize(main_window, &display_w, &display_h);
         glViewport(0, 0, display_w, display_h);
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-        glfwSwapBuffers(window);
+        glfwSwapBuffers(main_window);
     }
-
+    
+    glfwDestroyWindow(main_window);
+    if(open_project) {
+        StartNewProject();
+    }
     // Cleanup
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
-
-    glfwDestroyWindow(window);
     glfwTerminate();
-
     return 0;
 }
