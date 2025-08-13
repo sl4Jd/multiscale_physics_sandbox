@@ -1,7 +1,7 @@
 #include "includes/imgui.h"
 #include "appstate.h"
 #include "game_engine.h"
-#include "open_project.h"
+#include "main_menu.h"
 
 #include <GLFW/glfw3.h>
 
@@ -19,7 +19,7 @@ extern int windowHeight;
 
 bool no_name = false;
 bool name_exists = false;
-bool open_project = false;
+bool open_new_project = false;
 
 using namespace std;
 
@@ -79,7 +79,7 @@ void CreateProject()
                     projectFile.close();
                 }
                 glfwSetWindowShouldClose(main_window, true);
-                open_project = true;
+                open_new_project = true;
             }
 
         }
