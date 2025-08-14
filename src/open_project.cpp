@@ -22,11 +22,12 @@ bool no_selected = false;
 bool open_project = false;
 bool load_projects = false;
 static int selectedIndex = -1;
-int count;
+
 
 using namespace std;
 
 vector<string> labels;
+int count;
 
 void load_project_files(){
     std::string folderPath = "projects";
@@ -40,7 +41,7 @@ void load_project_files(){
     catch (const filesystem::filesystem_error& e) {
         std::cerr << "Error: " << e.what() << std::endl;
     }
-    count = size(labels);
+    count = labels.size();
     load_projects = true;
 }
 void DrawSelectableBoxes()
@@ -50,11 +51,22 @@ void DrawSelectableBoxes()
     }
     for (int i = 0; i < count; i++)
     {
-        ImVec2 itemSize(150, 40);
+        ImVec2 itemSize(300, 80);
 
         if (ImGui::Selectable(labels[i].c_str(), selectedIndex == i, 0, itemSize))
         {
             selectedIndex = i;
+        }
+        if(selectedIndex == i)
+        {
+            ImGui::SameLine();
+            if(ImGui::Button("Delete", ImVec2(150, 40))) {
+                filesystem::remove("projects/" + labels[i]);
+                labels.erase(labels.begin() + i);
+                count--;
+                i--;
+                selectedIndex = -1;
+            }
         }
     }
 }
