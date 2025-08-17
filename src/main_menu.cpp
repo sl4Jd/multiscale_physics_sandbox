@@ -38,7 +38,7 @@ void ShowStartWindow() {
 
     ImGui::SetCursorPosY(100);
     ImGui::SetCursorPosX(windowWidth/2 - 250);
-    ImGui::Text("Game Engine version 0.1.2");
+    ImGui::Text("Game Engine version 0.1.3");
     ImGui::Spacing();
     ImGui::Spacing();
 

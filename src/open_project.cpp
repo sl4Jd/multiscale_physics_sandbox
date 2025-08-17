@@ -21,6 +21,8 @@ extern int windowHeight;
 bool no_selected = false;
 bool open_project = false;
 bool load_projects = false;
+bool editing = false;
+static char editBuffer[128] = "";
 static int selectedIndex = -1;
 
 
@@ -28,7 +30,11 @@ using namespace std;
 
 vector<string> labels;
 int count;
-
+void save_edit(){
+    filesystem::rename("projects/" + labels[selectedIndex], "projects/" + string(editBuffer));
+    labels[selectedIndex] = editBuffer;
+    editing = false;
+}
 void load_project_files(){
     std::string folderPath = "projects";
     try {
@@ -52,20 +58,43 @@ void DrawSelectableBoxes()
     for (int i = 0; i < count; i++)
     {
         ImVec2 itemSize(300, 80);
-
-        if (ImGui::Selectable(labels[i].c_str(), selectedIndex == i, 0, itemSize))
-        {
-            selectedIndex = i;
+        if(editing && selectedIndex == i) {
+            ImGui::SetKeyboardFocusHere();
+            if (ImGui::InputText("##edit", editBuffer, sizeof(editBuffer),
+                ImGuiInputTextFlags_EnterReturnsTrue))
+            {
+                save_edit();
+            }
+            
         }
-        if(selectedIndex == i)
-        {
-            ImGui::SameLine();
-            if(ImGui::Button("Delete", ImVec2(150, 40))) {
-                filesystem::remove("projects/" + labels[i]);
-                labels.erase(labels.begin() + i);
-                count--;
-                i--;
-                selectedIndex = -1;
+        else {
+            if (ImGui::Selectable(labels[i].c_str(), selectedIndex == i, 0, itemSize))
+            {
+                if(editing){
+                    save_edit();
+                }
+                else{
+                    selectedIndex = i;
+                }
+            }
+            if(selectedIndex == i && !editing)
+            {
+                ImGui::SameLine();
+                if(ImGui::Button("Delete", ImVec2(150, 40))) {
+                    filesystem::remove("projects/" + labels[i]);
+                    labels.erase(labels.begin() + i);
+                    count--;
+                    i--;
+                    selectedIndex = -1;
+                }
+                ImGui::SameLine();
+                if (ImGui::Button("Rename", ImVec2(150, 40)))
+                {
+                    editing = true;
+                    strncpy(editBuffer, labels[i].c_str(), sizeof(editBuffer) - 1);
+                    editBuffer[sizeof(editBuffer) - 1] = '\0';
+                }
+            
             }
         }
     }
@@ -92,9 +121,14 @@ void OpenProject()
     ImGui::SetCursorPosX(50);
     if (ImGui::Button("Back", ImVec2(200, 70)))
     {
-        no_selected = false;
-        selectedIndex = -1;
-        currentAppState = AppState::MainMenu;
+        if(editing){
+            save_edit();
+        }
+        else {
+            no_selected = false;
+            selectedIndex = -1;
+            currentAppState = AppState::MainMenu;
+        }
     }
 
     ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 100);
@@ -102,14 +136,19 @@ void OpenProject()
 
     if (ImGui::Button("Create", ImVec2(200, 70)))
     {
-        if (selectedIndex == -1) {
-            no_selected = true;
+        if(editing){
+            save_edit();
         }
         else {
-            no_selected = false;
-            glfwSetWindowShouldClose(main_window, true);
-            open_project = true;
+            if (selectedIndex == -1) {
+                no_selected = true;
+            }
+            else {
+                no_selected = false;
+                glfwSetWindowShouldClose(main_window, true);
+                open_project = true;
 
+            }
         }
     }
     ImGui::End();
