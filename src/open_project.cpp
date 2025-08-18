@@ -11,19 +11,19 @@
 #include <string>
 #include <vector>
 
-static char inputBuffer[256] = "";
-
 extern AppState currentAppState;
 
 extern int windowWidth;
 extern int windowHeight;
 
 bool no_selected = false;
+bool name_is_empty = false;
 bool open_project = false;
 bool load_projects = false;
 bool delete_window = false;
+bool already_named = false;
 bool editing = false;
-static char editBuffer[128] = "";
+static char editBuffer[32] = "";
 static int selectedIndex = -1;
 static bool justActivated = false;
 
@@ -33,9 +33,26 @@ vector<string> labels;
 int count;
 
 void save_edit(){
-    filesystem::rename("projects/" + labels[selectedIndex] + ".txt", "projects/" + string(editBuffer) + ".txt");
-    labels[selectedIndex] = editBuffer;
-    editing = false;
+    already_named = false;
+    if(strlen(editBuffer) == 0) {
+        name_is_empty = true;
+        justActivated = true;
+    }
+    else{
+        name_is_empty = false;
+        for(int j = 0; j < count; j++) {
+            if(labels[j] == editBuffer && j != selectedIndex) {
+                already_named = true;
+                justActivated = true;
+            }
+        }
+        if(!already_named) {
+            filesystem::rename("projects/" + labels[selectedIndex] + ".txt", "projects/" + string(editBuffer) + ".txt");
+            labels[selectedIndex] = editBuffer;
+            editing = false;
+            name_is_empty = false;
+        }
+    }
 }
 void load_project_files(){
     std::string folderPath = "projects";
@@ -70,7 +87,12 @@ void DrawSelectableBoxes()
             {
                 save_edit();
             }
-            
+            if(name_is_empty){
+                ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Project must have a name!");
+            }
+            if(already_named){
+                ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Project name already exists!");
+            }
         }
         else {
             if (ImGui::Selectable(labels[i].c_str(), selectedIndex == i, 0, itemSize))
