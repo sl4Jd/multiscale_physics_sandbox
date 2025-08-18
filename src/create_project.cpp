@@ -10,7 +10,7 @@
 #include <iostream>
 #include <string>
 
-static char inputBuffer[256] = "";
+static char inputBuffer[32] = "";
 
 extern AppState currentAppState;
 
@@ -66,8 +66,8 @@ void CreateProject()
         }
         else {
             no_name = false;
-            string projectName = string(inputBuffer) + ".txt";
-            string projectPath = "projects/" + projectName;
+            string projectName = string(inputBuffer);
+            string projectPath = "projects/" + projectName + ".txt";
             if(filesystem::exists(projectPath)) {
                 name_exists = true;
             }

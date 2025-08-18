@@ -21,17 +21,19 @@ extern int windowHeight;
 bool no_selected = false;
 bool open_project = false;
 bool load_projects = false;
+bool delete_window = false;
 bool editing = false;
 static char editBuffer[128] = "";
 static int selectedIndex = -1;
-
+static bool justActivated = false;
 
 using namespace std;
 
 vector<string> labels;
 int count;
+
 void save_edit(){
-    filesystem::rename("projects/" + labels[selectedIndex], "projects/" + string(editBuffer));
+    filesystem::rename("projects/" + labels[selectedIndex] + ".txt", "projects/" + string(editBuffer) + ".txt");
     labels[selectedIndex] = editBuffer;
     editing = false;
 }
@@ -40,7 +42,7 @@ void load_project_files(){
     try {
         for (const auto& entry : filesystem::directory_iterator(folderPath)) {
             if (entry.is_regular_file()) {
-                labels.push_back(entry.path().filename().string());
+                labels.push_back(entry.path().stem().string());
             }
         }
     }
@@ -59,7 +61,10 @@ void DrawSelectableBoxes()
     {
         ImVec2 itemSize(300, 80);
         if(editing && selectedIndex == i) {
-            ImGui::SetKeyboardFocusHere();
+            if (justActivated) {
+                ImGui::SetKeyboardFocusHere();
+                justActivated = false;
+            }
             if (ImGui::InputText("##edit", editBuffer, sizeof(editBuffer),
                 ImGuiInputTextFlags_EnterReturnsTrue))
             {
@@ -81,22 +86,37 @@ void DrawSelectableBoxes()
             {
                 ImGui::SameLine();
                 if(ImGui::Button("Delete", ImVec2(150, 40))) {
-                    filesystem::remove("projects/" + labels[i]);
-                    labels.erase(labels.begin() + i);
-                    count--;
-                    i--;
-                    selectedIndex = -1;
+                    ImGui::OpenPopup("Delete Confirmation");
                 }
                 ImGui::SameLine();
                 if (ImGui::Button("Rename", ImVec2(150, 40)))
                 {
                     editing = true;
+                    justActivated = true;
                     strncpy(editBuffer, labels[i].c_str(), sizeof(editBuffer) - 1);
                     editBuffer[sizeof(editBuffer) - 1] = '\0';
                 }
             
             }
         }
+    }
+    if (ImGui::BeginPopupModal("Delete Confirmation", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+    {
+        ImGui::Text("Are you sure you want to delete the project        \n '%s'?", labels[selectedIndex].c_str());
+        if (ImGui::Button("No", ImVec2(150, 40)))
+        {
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Yes", ImVec2(150, 40)))
+        {
+            filesystem::remove("projects/" + labels[selectedIndex] + ".txt");
+            labels.erase(labels.begin() + selectedIndex);
+            count--;
+            selectedIndex = -1;
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
     }
 }
 void OpenProject()
@@ -116,7 +136,6 @@ void OpenProject()
     if (no_selected) {
         ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Select a project!");
     }
-
     ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 100);
     ImGui::SetCursorPosX(50);
     if (ImGui::Button("Back", ImVec2(200, 70)))
