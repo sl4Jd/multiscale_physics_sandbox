@@ -1,4 +1,4 @@
-#include "includes/imgui.h"
+#include <imgui/imgui.h>
 #include "appstate.h"
 #include "game_engine.h"
 #include "main_menu.h"
@@ -153,7 +153,7 @@ void OpenProject()
     ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 100);
     ImGui::SetCursorPosX(ImGui::GetWindowSize().x - 250); 
 
-    if (ImGui::Button("Create", ImVec2(200, 70)))
+    if (ImGui::Button("Load", ImVec2(200, 70)))
     {
         if(editing){
             save_edit();
