@@ -13,7 +13,7 @@
                 "${workspaceFolder}/src/main_menu.cpp",
                 "${workspaceFolder}/src/open_project.cpp",
                 "${workspaceFolder}/src/create_project.cpp",
-                "${workspaceFolder}/src/image_implementation.cpp",
+                "${workspaceFolder}/include/image_implementation.cpp",
                 "${workspaceFolder}/include/imgui/imgui.cpp",
                 "${workspaceFolder}/include/imgui/imgui_widgets.cpp",
                 "${workspaceFolder}/include/imgui/imgui_tables.cpp",
