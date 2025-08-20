@@ -27,6 +27,7 @@ GLFWwindow* main_window;
 
 static ma_decoder decoder; 
 static ma_device device;
+static ma_engine engine;
 
 void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount) {
     ma_decoder* pDecoder = (ma_decoder*)pDevice->pUserData;
@@ -40,6 +41,7 @@ void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uin
     (void)pInput; // Prevent unused variable warning
 }
 
+// load device and decoder(not needed for basic effects)
 void load_audio(){
     const char* filename = "src/sound/I_Wonder.mp3"; 
     if(ma_decoder_init_file(filename, NULL, &decoder) != MA_SUCCESS) {
@@ -91,6 +93,7 @@ void ShowStartWindow() {
     ImGui::SetCursorPosX(windowWidth/2 - 250);
     if (ImGui::Button("Start New Project", ImVec2(500, 100))) {
         currentAppState = AppState::CreateProject;
+        ma_engine_play_sound(&engine, "src/sound/click.wav", NULL);
     }
 
     ImGui::Spacing();
@@ -98,18 +101,20 @@ void ShowStartWindow() {
     ImGui::SetCursorPosX(windowWidth/2 - 250);
     if (ImGui::Button("Load Project", ImVec2(500, 100))) {
         currentAppState = AppState::OpenProject;
+        ma_engine_play_sound(&engine, "src/sound/click.wav", NULL);
     }
 
     ImGui::Spacing();
     ImGui::SetCursorPosX(windowWidth/2 - 250);
     if (ImGui::Button("Settings", ImVec2(500, 100))) {
         std::cout << "Settings Clicked" << std::endl;
+        ma_engine_play_sound(&engine, "src/sound/click.wav", NULL);
     }
 
     ImGui::End();
 }
 
-int main(int, char**)
+int main()
 {
     // Setup GLFW
     if (!glfwInit())
@@ -149,8 +154,13 @@ int main(int, char**)
     ImGui_ImplGlfw_InitForOpenGL(main_window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
 
-    // Load audio
-    load_audio();
+    // not needed for basic effects
+    //load_audio();
+    if (ma_engine_init(NULL, &engine) != MA_SUCCESS) {
+        printf("Failed to init engine\n");
+        return -1;
+    }
+
     // Main loop
     while (!glfwWindowShouldClose(main_window))
     {
@@ -193,6 +203,7 @@ int main(int, char**)
     // Cleanup
     ma_device_uninit(&device);
     ma_decoder_uninit(&decoder);
+    ma_engine_uninit(&engine);
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
