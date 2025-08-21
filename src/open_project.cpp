@@ -10,11 +10,15 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <miniaudio/miniaudio.h>
 
 extern AppState currentAppState;
 
 extern int windowWidth;
 extern int windowHeight;
+extern ma_engine engine;
+extern const char* click_sound;
+extern const char* hover_sound;
 
 bool no_selected = false;
 bool name_is_empty = false;
@@ -26,6 +30,9 @@ bool editing = false;
 static char editBuffer[32] = "";
 static int selectedIndex = -1;
 static bool justActivated = false;
+
+static bool some_was_hovered = false;
+static bool some_hovered = false;
 
 using namespace std;
 
@@ -97,6 +104,7 @@ void DrawSelectableBoxes()
         else {
             if (ImGui::Selectable(labels[i].c_str(), selectedIndex == i, 0, itemSize))
             {
+                ma_engine_play_sound(&engine, click_sound, NULL);
                 if(editing){
                     save_edit();
                 }
@@ -104,21 +112,30 @@ void DrawSelectableBoxes()
                     selectedIndex = i;
                 }
             }
+            if(ImGui::IsItemHovered())
+            {
+                some_hovered = true;
+            }
             if(selectedIndex == i && !editing)
             {
                 ImGui::SameLine();
                 if(ImGui::Button("Delete", ImVec2(150, 40))) {
+                    ma_engine_play_sound(&engine, click_sound, NULL);
                     ImGui::OpenPopup("Delete Confirmation");
                 }
                 ImGui::SameLine();
                 if (ImGui::Button("Rename", ImVec2(150, 40)))
                 {
+                    ma_engine_play_sound(&engine, click_sound, NULL);
                     editing = true;
                     justActivated = true;
                     strncpy(editBuffer, labels[i].c_str(), sizeof(editBuffer) - 1);
                     editBuffer[sizeof(editBuffer) - 1] = '\0';
                 }
-            
+                if (ImGui::IsItemHovered())
+                {
+                    some_hovered = true;
+                }
             }
         }
     }
@@ -127,11 +144,13 @@ void DrawSelectableBoxes()
         ImGui::Text("Are you sure you want to delete the project        \n '%s'?", labels[selectedIndex].c_str());
         if (ImGui::Button("No", ImVec2(150, 40)))
         {
+            ma_engine_play_sound(&engine, click_sound, NULL);
             ImGui::CloseCurrentPopup();
         }
         ImGui::SameLine();
         if (ImGui::Button("Yes", ImVec2(150, 40)))
         {
+            ma_engine_play_sound(&engine, click_sound, NULL);
             filesystem::remove("projects/" + labels[selectedIndex] + ".txt");
             labels.erase(labels.begin() + selectedIndex);
             count--;
@@ -154,6 +173,7 @@ void OpenProject()
         ImGuiWindowFlags_NoBackground |
         ImGuiWindowFlags_AlwaysAutoResize);
     ImGui::Text("Select a project");
+    some_hovered = false;
     DrawSelectableBoxes();
     if (no_selected) {
         ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Select a project!");
@@ -162,6 +182,7 @@ void OpenProject()
     ImGui::SetCursorPosX(50);
     if (ImGui::Button("Back", ImVec2(200, 70)))
     {
+        ma_engine_play_sound(&engine, click_sound, NULL);
         if(editing){
             save_edit();
         }
@@ -171,12 +192,15 @@ void OpenProject()
             currentAppState = AppState::MainMenu;
         }
     }
-
+    if (ImGui::IsItemHovered()) {
+         some_hovered = true;
+    }
     ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 100);
     ImGui::SetCursorPosX(ImGui::GetWindowSize().x - 250); 
 
     if (ImGui::Button("Load", ImVec2(200, 70)))
     {
+        ma_engine_play_sound(&engine, click_sound, NULL);
         if(editing){
             save_edit();
         }
@@ -192,6 +216,13 @@ void OpenProject()
             }
         }
     }
+    if (ImGui::IsItemHovered()) {
+        some_hovered = true;
+    }
+    if(some_hovered && !some_was_hovered) {
+        ma_engine_play_sound(&engine, hover_sound, NULL);
+    }
+    some_was_hovered = some_hovered;
     ImGui::End();
 }
 

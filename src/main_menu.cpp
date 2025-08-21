@@ -17,7 +17,8 @@ int screenWidth;
 int screenHeight;
 int windowWidth;
 int windowHeight;
-
+const char* click_sound = "src/sound/click.wav";
+const char* hover_sound = "src/sound/hover.wav";
 extern bool open_new_project;
 extern bool open_project;
 
@@ -27,7 +28,10 @@ GLFWwindow* main_window;
 
 static ma_decoder decoder; 
 static ma_device device;
-static ma_engine engine;
+ma_engine engine;
+
+static bool some_hovered = false;
+static bool some_was_hovered = false;
 
 void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount) {
     ma_decoder* pDecoder = (ma_decoder*)pDevice->pUserData;
@@ -89,28 +93,39 @@ void ShowStartWindow() {
     ImGui::Text("Game Engine version 0.1.4");
     ImGui::Spacing();
     ImGui::Spacing();
-
+    some_hovered = false;
     ImGui::SetCursorPosX(windowWidth/2 - 250);
     if (ImGui::Button("Start New Project", ImVec2(500, 100))) {
         currentAppState = AppState::CreateProject;
-        ma_engine_play_sound(&engine, "src/sound/click.wav", NULL);
+        ma_engine_play_sound(&engine, click_sound, NULL);
+    }
+    if (ImGui::IsItemHovered()) {
+        some_hovered = true;
     }
 
     ImGui::Spacing();
-
     ImGui::SetCursorPosX(windowWidth/2 - 250);
     if (ImGui::Button("Load Project", ImVec2(500, 100))) {
         currentAppState = AppState::OpenProject;
-        ma_engine_play_sound(&engine, "src/sound/click.wav", NULL);
+        ma_engine_play_sound(&engine, click_sound, NULL);
+    }
+    if (ImGui::IsItemHovered()) {
+        some_hovered = true;
     }
 
     ImGui::Spacing();
     ImGui::SetCursorPosX(windowWidth/2 - 250);
     if (ImGui::Button("Settings", ImVec2(500, 100))) {
         std::cout << "Settings Clicked" << std::endl;
-        ma_engine_play_sound(&engine, "src/sound/click.wav", NULL);
+        ma_engine_play_sound(&engine, click_sound, NULL);
     }
-
+    if (ImGui::IsItemHovered()) {
+        some_hovered = true;
+    }
+    if(some_hovered && !some_was_hovered) {
+        ma_engine_play_sound(&engine, hover_sound, NULL);
+    }
+    some_was_hovered = some_hovered;
     ImGui::End();
 }
 
@@ -139,7 +154,7 @@ int main()
 
     glfwSetWindowPos(main_window, posX, posY);
     glfwMakeContextCurrent(main_window);
-    glfwSwapInterval(1); // Enable vsync
+    glfwSwapInterval(1); // enable vsync
 
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
