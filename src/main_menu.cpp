@@ -6,6 +6,8 @@
 #include <string>
 #include <windows.h>
 #include <miniaudio/miniaudio.h>
+#include <json.hpp>
+#include <fstream>
 
 #include "game_engine.h"
 #include "create_project.h"
@@ -33,6 +35,30 @@ ma_engine engine;
 static ImGuiID some_hovered = 0;
 static ImGuiID some_was_hovered = 0;
 
+using json = nlohmann::json;
+using namespace std;
+
+unordered_map<string, string> translations;
+string currentLang = "sr";
+
+bool loadLanguage(const string& lang) {
+    ifstream file("src/local/" + lang + ".json");
+    if (!file.is_open()) return false;
+
+    json j;
+    file >> j;
+
+    translations.clear();
+    for (auto it = j.begin(); it != j.end(); ++it) {
+        translations[it.key()] = it.value();
+    }
+    currentLang = lang;
+    return true;
+}
+string tr(const std::string& key) {
+    if (translations.count(key)) return translations[key];
+    return key; // fallback
+}
 void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount) {
     ma_decoder* pDecoder = (ma_decoder*)pDevice->pUserData;
     if (pDecoder == NULL) {
@@ -95,7 +121,7 @@ void ShowStartWindow() {
     ImGui::Spacing();
     some_hovered = 0;
     ImGui::SetCursorPosX(windowWidth/2 - 250);
-    if (ImGui::Button("Start New Project", ImVec2(500, 100))) {
+    if (ImGui::Button(tr("menu.new_project").c_str(), ImVec2(500, 100))) {
         currentAppState = AppState::CreateProject;
         ma_engine_play_sound(&engine, click_sound, NULL);
     }
@@ -107,7 +133,7 @@ void ShowStartWindow() {
 
     ImGui::Spacing();
     ImGui::SetCursorPosX(windowWidth/2 - 250);
-    if (ImGui::Button("Load Project", ImVec2(500, 100))) {
+    if (ImGui::Button(tr("menu.open_project").c_str(), ImVec2(500, 100))) {
         currentAppState = AppState::OpenProject;
         ma_engine_play_sound(&engine, click_sound, NULL);
     }
@@ -119,7 +145,7 @@ void ShowStartWindow() {
 
     ImGui::Spacing();
     ImGui::SetCursorPosX(windowWidth/2 - 250);
-    if (ImGui::Button("Settings", ImVec2(500, 100))) {
+    if (ImGui::Button((tr("menu.settings")).c_str(), ImVec2(500, 100))) {
         std::cout << "Settings Clicked" << std::endl;
         ma_engine_play_sound(&engine, click_sound, NULL);
     }
@@ -166,12 +192,17 @@ int main()
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
+    ImFontGlyphRangesBuilder builder;
+    builder.AddText("šćžŠĆŽ");           // add the characters you need
+    builder.AddRanges(io.Fonts->GetGlyphRangesDefault()); // add default ASCII
 
-    ImFont* lucida_big = io.Fonts->AddFontFromFileTTF("src\\fonts\\lucon.ttf", 32.0f);
+    ImVector<ImWchar> glyph_ranges;
+    builder.BuildRanges(&glyph_ranges);
+    ImFont* lucida_big = io.Fonts->AddFontFromFileTTF("src\\fonts\\lucon.ttf", 32.0f, NULL, glyph_ranges.Data);
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(main_window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
-
+    loadLanguage(currentLang);
     // not needed for basic effects
     //load_audio();
     if (ma_engine_init(NULL, &engine) != MA_SUCCESS) {

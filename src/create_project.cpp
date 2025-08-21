@@ -4,12 +4,14 @@
 #include "main_menu.h"
 
 #include <GLFW/glfw3.h>
-
+#include <unordered_map>
 #include <fstream>
 #include <filesystem>
 #include <iostream>
 #include <string>
 #include <miniaudio/miniaudio.h>
+
+using namespace std;
 
 static char inputBuffer[32] = "";
 
@@ -21,14 +23,16 @@ extern ma_engine engine;
 extern const char* click_sound;
 extern const char* hover_sound;
 
+extern unordered_map<string, string> translations;
+
+extern string tr(const string& key);
+
 bool no_name = false;
 bool name_exists = false;
 bool open_new_project = false;
 
 static ImGuiID some_hovered = 0;
 static ImGuiID some_was_hovered = 0;
-
-using namespace std;
 
 void CreateProject()
 {
@@ -43,21 +47,21 @@ void CreateProject()
         ImGuiWindowFlags_NoBackground |
         ImGuiWindowFlags_AlwaysAutoResize);
     
-    ImGui::Text("Project Name:");
+    ImGui::Text(tr("menu.enter_project_name").c_str());
     ImGui::InputText("##InputName", inputBuffer, IM_ARRAYSIZE(inputBuffer));
 
     if (no_name) {
-        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Project name cannot be empty!");
+        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), tr("menu.error_no_name").c_str());
     }
 
     if (name_exists) {
-        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Project name already exists!");
+        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), tr("menu.error_name_exists").c_str());
     }
 
     some_hovered = 0;
     ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 100);
     ImGui::SetCursorPosX(50);
-    if (ImGui::Button("Back", ImVec2(200, 70)))
+    if (ImGui::Button(tr("menu.back").c_str(), ImVec2(200, 70)))
     {
         ma_engine_play_sound(&engine, click_sound, NULL);
         no_name = false;
@@ -73,7 +77,7 @@ void CreateProject()
     ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 100);
     ImGui::SetCursorPosX(ImGui::GetWindowSize().x - 250); 
 
-    if (ImGui::Button("Create", ImVec2(200, 70)))
+    if (ImGui::Button(tr("menu.create").c_str(), ImVec2(200, 70)))
     {
         ma_engine_play_sound(&engine, click_sound, NULL);
         if (inputBuffer[0] == '\0') {

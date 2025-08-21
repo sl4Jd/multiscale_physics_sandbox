@@ -10,7 +10,10 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <unordered_map>
 #include <miniaudio/miniaudio.h>
+
+using namespace std;
 
 extern AppState currentAppState;
 
@@ -19,6 +22,9 @@ extern int windowHeight;
 extern ma_engine engine;
 extern const char* click_sound;
 extern const char* hover_sound;
+
+extern unordered_map<string, string> translations;
+extern string tr(const string& key);
 
 bool no_selected = false;
 bool name_is_empty = false;
@@ -33,8 +39,6 @@ static bool justActivated = false;
 
 static ImGuiID some_hovered = 0;
 static ImGuiID some_was_hovered = 0;
-
-using namespace std;
 
 vector<string> labels;
 int count;
@@ -95,10 +99,10 @@ void DrawSelectableBoxes()
                 save_edit();
             }
             if(name_is_empty){
-                ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Project must have a name!");
+                ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), tr("menu.error_no_name").c_str());
             }
             if(already_named){
-                ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Project name already exists!");
+                ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), tr("menu.error_name_exists").c_str());
             }
         }
         else {
@@ -121,12 +125,12 @@ void DrawSelectableBoxes()
             if(selectedIndex == i && !editing)
             {
                 ImGui::SameLine();
-                if(ImGui::Button("Delete", ImVec2(150, 40))) {
+                if(ImGui::Button(tr("delete").c_str(), ImVec2(150, 40))) {
                     ma_engine_play_sound(&engine, click_sound, NULL);
-                    ImGui::OpenPopup("Delete Confirmation");
+                    ImGui::OpenPopup(tr("menu.delete_popup").c_str());
                 }
                 ImGui::SameLine();
-                if (ImGui::Button("Rename", ImVec2(150, 40)))
+                if (ImGui::Button(tr("rename").c_str(), ImVec2(150, 40)))
                 {
                     ma_engine_play_sound(&engine, click_sound, NULL);
                     editing = true;
@@ -143,16 +147,16 @@ void DrawSelectableBoxes()
             }
         }
     }
-    if (ImGui::BeginPopupModal("Delete Confirmation", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+    if (ImGui::BeginPopupModal(tr("menu.delete_popup").c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize))
     {
-        ImGui::Text("Are you sure you want to delete the project        \n '%s'?", labels[selectedIndex].c_str());
-        if (ImGui::Button("No", ImVec2(150, 40)))
+        ImGui::Text(tr("delete.confirm").c_str(), labels[selectedIndex].c_str());
+        if (ImGui::Button(tr("no").c_str(), ImVec2(150, 40)))
         {
             ma_engine_play_sound(&engine, click_sound, NULL);
             ImGui::CloseCurrentPopup();
         }
         ImGui::SameLine();
-        if (ImGui::Button("Yes", ImVec2(150, 40)))
+        if (ImGui::Button(tr("yes").c_str(), ImVec2(150, 40)))
         {
             ma_engine_play_sound(&engine, click_sound, NULL);
             filesystem::remove("projects/" + labels[selectedIndex] + ".txt");
@@ -176,15 +180,15 @@ void OpenProject()
         ImGuiWindowFlags_NoSavedSettings |
         ImGuiWindowFlags_NoBackground |
         ImGuiWindowFlags_AlwaysAutoResize);
-    ImGui::Text("Select a project");
+    ImGui::Text(tr("menu.select_project").c_str());
     some_hovered = 0;
     DrawSelectableBoxes();
     if (no_selected) {
-        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Select a project!");
+        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), tr("menu.select_project").c_str());
     }
     ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 100);
     ImGui::SetCursorPosX(50);
-    if (ImGui::Button("Back", ImVec2(200, 70)))
+    if (ImGui::Button(tr("menu.back").c_str(), ImVec2(200, 70)))
     {
         ma_engine_play_sound(&engine, click_sound, NULL);
         if(editing){
@@ -204,7 +208,7 @@ void OpenProject()
     ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 100);
     ImGui::SetCursorPosX(ImGui::GetWindowSize().x - 250); 
 
-    if (ImGui::Button("Load", ImVec2(200, 70)))
+    if (ImGui::Button(tr("menu.open").c_str(), ImVec2(200, 70)))
     {
         ma_engine_play_sound(&engine, click_sound, NULL);
         if(editing){

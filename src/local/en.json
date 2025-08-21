@@ -1,0 +1,18 @@
+{
+  "menu.create": "Create",
+  "menu.open": "Open",
+  "menu.back": "Back",
+  "menu.new_project": "Create New Project",
+  "menu.open_project": "Open Project",
+  "menu.settings": "Settings",
+  "menu.enter_project_name": "Project Name:",
+  "menu.error_no_name": "Project must have a name.",
+  "menu.error_name_exists": "Project name already exists.",
+  "no": "No",
+  "yes": "Yes",
+  "menu.select_project": "Select a project",
+  "delete": "Delete",
+  "rename": "Rename",
+  "menu.delete_popup": "Delete Confirmation",
+  "delete.confirm": "Are you sure you want to delete the project        \n '%s'?"
+}
