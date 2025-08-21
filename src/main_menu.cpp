@@ -30,8 +30,8 @@ static ma_decoder decoder;
 static ma_device device;
 ma_engine engine;
 
-static bool some_hovered = false;
-static bool some_was_hovered = false;
+static ImGuiID some_hovered = 0;
+static ImGuiID some_was_hovered = 0;
 
 void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount) {
     ma_decoder* pDecoder = (ma_decoder*)pDevice->pUserData;
@@ -93,14 +93,16 @@ void ShowStartWindow() {
     ImGui::Text("Game Engine version 0.1.4");
     ImGui::Spacing();
     ImGui::Spacing();
-    some_hovered = false;
+    some_hovered = 0;
     ImGui::SetCursorPosX(windowWidth/2 - 250);
     if (ImGui::Button("Start New Project", ImVec2(500, 100))) {
         currentAppState = AppState::CreateProject;
         ma_engine_play_sound(&engine, click_sound, NULL);
     }
     if (ImGui::IsItemHovered()) {
-        some_hovered = true;
+        ImGuiID id = ImGui::GetItemID();
+        if(some_was_hovered != id) ma_engine_play_sound(&engine, hover_sound, NULL);
+        some_hovered = id;
     }
 
     ImGui::Spacing();
@@ -110,7 +112,9 @@ void ShowStartWindow() {
         ma_engine_play_sound(&engine, click_sound, NULL);
     }
     if (ImGui::IsItemHovered()) {
-        some_hovered = true;
+        ImGuiID id = ImGui::GetItemID();
+        if(some_was_hovered != id) ma_engine_play_sound(&engine, hover_sound, NULL);
+        some_hovered = id;
     }
 
     ImGui::Spacing();
@@ -120,10 +124,9 @@ void ShowStartWindow() {
         ma_engine_play_sound(&engine, click_sound, NULL);
     }
     if (ImGui::IsItemHovered()) {
-        some_hovered = true;
-    }
-    if(some_hovered && !some_was_hovered) {
-        ma_engine_play_sound(&engine, hover_sound, NULL);
+        ImGuiID id = ImGui::GetItemID();
+        if(some_was_hovered != id) ma_engine_play_sound(&engine, hover_sound, NULL);
+        some_hovered = id;
     }
     some_was_hovered = some_hovered;
     ImGui::End();

@@ -31,8 +31,8 @@ static char editBuffer[32] = "";
 static int selectedIndex = -1;
 static bool justActivated = false;
 
-static bool some_was_hovered = false;
-static bool some_hovered = false;
+static ImGuiID some_hovered = 0;
+static ImGuiID some_was_hovered = 0;
 
 using namespace std;
 
@@ -114,7 +114,9 @@ void DrawSelectableBoxes()
             }
             if(ImGui::IsItemHovered())
             {
-                some_hovered = true;
+                ImGuiID id = ImGui::GetItemID();
+                if(some_was_hovered != id) ma_engine_play_sound(&engine, hover_sound, NULL);
+                some_hovered = id;
             }
             if(selectedIndex == i && !editing)
             {
@@ -134,7 +136,9 @@ void DrawSelectableBoxes()
                 }
                 if (ImGui::IsItemHovered())
                 {
-                    some_hovered = true;
+                    ImGuiID id = ImGui::GetItemID();
+                    if(some_was_hovered != id) ma_engine_play_sound(&engine, hover_sound, NULL);
+                    some_hovered = id;
                 }
             }
         }
@@ -173,7 +177,7 @@ void OpenProject()
         ImGuiWindowFlags_NoBackground |
         ImGuiWindowFlags_AlwaysAutoResize);
     ImGui::Text("Select a project");
-    some_hovered = false;
+    some_hovered = 0;
     DrawSelectableBoxes();
     if (no_selected) {
         ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Select a project!");
@@ -193,7 +197,9 @@ void OpenProject()
         }
     }
     if (ImGui::IsItemHovered()) {
-         some_hovered = true;
+         ImGuiID id = ImGui::GetItemID();
+        if(some_was_hovered != id) ma_engine_play_sound(&engine, hover_sound, NULL);
+        some_hovered = id;
     }
     ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 100);
     ImGui::SetCursorPosX(ImGui::GetWindowSize().x - 250); 
@@ -217,10 +223,9 @@ void OpenProject()
         }
     }
     if (ImGui::IsItemHovered()) {
-        some_hovered = true;
-    }
-    if(some_hovered && !some_was_hovered) {
-        ma_engine_play_sound(&engine, hover_sound, NULL);
+        ImGuiID id = ImGui::GetItemID();
+        if(some_was_hovered != id) ma_engine_play_sound(&engine, hover_sound, NULL);
+        some_hovered = id;
     }
     some_was_hovered = some_hovered;
     ImGui::End();
