@@ -39,7 +39,7 @@ using json = nlohmann::json;
 using namespace std;
 
 unordered_map<string, string> translations;
-string currentLang = "sr";
+string currentLang = "english";
 
 bool loadLanguage(const string& lang) {
     ifstream file("src/local/" + lang + ".json");
@@ -102,6 +102,28 @@ void load_audio(){
         return;
     }
 }
+
+static void ShowLanguageSelector() {
+    static int current_lang = 0; // Index of the selected language
+    const char* languages[] = { "English", "Serbian"};
+
+    ImGui::Text("Language:");
+    ImGui::SameLine();
+
+    // Combo box: looks like a button and opens dropdown
+    if (ImGui::BeginCombo("##LanguageCombo", languages[current_lang])) {
+        for (int n = 0; n < IM_ARRAYSIZE(languages); n++) {
+            bool is_selected = (current_lang == n);
+            if (ImGui::Selectable(languages[n], is_selected)) {
+                current_lang = n; // update selected language
+                loadLanguage(languages[current_lang]);
+            }
+            if (is_selected)
+                ImGui::SetItemDefaultFocus(); // highlight the current choice
+        }
+        ImGui::EndCombo();
+    }
+}
 void ShowStartWindow() {
     ImGui::SetNextWindowSize(ImVec2(windowWidth, windowHeight), ImGuiCond_Always);
     ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
@@ -116,7 +138,7 @@ void ShowStartWindow() {
 
     ImGui::SetCursorPosY(100);
     ImGui::SetCursorPosX(windowWidth/2 - 250);
-    ImGui::Text("Game Engine version 0.1.4");
+    ImGui::Text("Game Engine version 0.1.5");
     ImGui::Spacing();
     ImGui::Spacing();
     some_hovered = 0;
@@ -154,7 +176,9 @@ void ShowStartWindow() {
         if(some_was_hovered != id) ma_engine_play_sound(&engine, hover_sound, NULL);
         some_hovered = id;
     }
+
     some_was_hovered = some_hovered;
+    ShowLanguageSelector();
     ImGui::End();
 }
 
@@ -229,7 +253,6 @@ int main()
         else if (currentAppState == AppState::OpenProject) {
             OpenProject();
         }
-
         // Rendering
         ImGui::Render();
         int display_w, display_h;
