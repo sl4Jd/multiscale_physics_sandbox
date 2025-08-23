@@ -1,7 +1,7 @@
 #include <imgui/imgui.h>
 #include "appstate.h"
 #include "game_engine.h"
-#include "main_menu.h"
+#include "main.h"
 
 #include <GLFW/glfw3.h>
 #include <unordered_map>

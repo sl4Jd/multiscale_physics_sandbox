@@ -10,6 +10,7 @@
                 "-std=c++17",
                 "-I${workspaceFolder}/include",
                 "-L${workspaceFolder}/lib",
+                "${workspaceFolder}/src/main.cpp",
                 "${workspaceFolder}/src/main_menu.cpp",
                 "${workspaceFolder}/src/open_project.cpp",
                 "${workspaceFolder}/src/create_project.cpp",
