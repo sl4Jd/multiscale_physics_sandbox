@@ -27,6 +27,7 @@ extern const char* hover_sound;
 
 static ImGuiID some_hovered = 0;
 static ImGuiID some_was_hovered = 0;
+static bool combo_open = false;
 
 static void ShowLanguageSelector() {
     ImGui::PushFont(lucida_small);
@@ -36,6 +37,10 @@ static void ShowLanguageSelector() {
     ImGui::SetCursorPosY(100);
     ImGui::PushItemWidth(100);
     if (ImGui::BeginCombo("##LanguageCombo", languages[current_lang])) {
+        if(combo_open == false) {
+            combo_open = true;
+            ma_engine_play_sound(&engine, click_sound, NULL);
+        }
         for (int n = 0; n < IM_ARRAYSIZE(languages); n++) {
             bool is_selected = (current_lang == n);
             if (ImGui::Selectable(languages[n], is_selected, ImGuiSelectableFlags_None, ImVec2(0, 0))) {
@@ -52,6 +57,16 @@ static void ShowLanguageSelector() {
                 ImGui::SetItemDefaultFocus(); // highlight the current choice
         }
         ImGui::EndCombo();
+    }
+    else {
+        combo_open = false;
+    }
+    if (ImGui::IsItemHovered()) {
+        ImGuiID id = ImGui::GetItemID();
+        if(some_hovered == 0) {
+            if(some_was_hovered != id) ma_engine_play_sound(&engine, hover_sound, NULL);
+            some_hovered = id;
+        }
     }
     ImGui::PopItemWidth();
     ImGui::PopFont();
@@ -101,7 +116,7 @@ void ShowStartWindow() {
     ImGui::Spacing();
     ImGui::SetCursorPosX(windowWidth/2 - 250);
     if (ImGui::Button((tr("menu.settings")).c_str(), ImVec2(500, 100))) {
-        std::cout << "Settings Clicked" << std::endl;
+        currentAppState = AppState::Settings;
         ma_engine_play_sound(&engine, click_sound, NULL);
     }
     if (ImGui::IsItemHovered()) {

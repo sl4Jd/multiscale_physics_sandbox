@@ -15,6 +15,7 @@
 #include "appstate.h"
 #include "open_project.h"
 #include "main_menu.h"
+#include "settings.h"
 
 int screenWidth;
 int screenHeight;
@@ -175,6 +176,9 @@ int main()
         }
         else if (currentAppState == AppState::OpenProject) {
             OpenProject();
+        }
+        else if (currentAppState == AppState::Settings) {
+            Settings();
         }
         // Rendering
         ImGui::Render();
