@@ -14,5 +14,6 @@
   "delete": "Izbriši",
   "rename": "Preimenuj",
   "menu.delete_popup": "Potvrda brisanja",
-  "delete.confirm": "Da li ste sigurni da želite da izbrišete projekat        \n '%s'?"
+  "delete.confirm": "Da li ste sigurni da želite da izbrišete projekat        \n '%s'?",
+  "save": "Sačuvaj"
 }
