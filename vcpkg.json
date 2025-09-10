@@ -1,0 +1,13 @@
+{
+  "name": "my-project",
+  "version-string": "0.1.0",
+  "dependencies": [
+    "assimp",
+    "glm",
+    "gtk",
+    "imgui",
+    "glad",
+    "glfw3",
+    "miniaudio"
+  ]
+}

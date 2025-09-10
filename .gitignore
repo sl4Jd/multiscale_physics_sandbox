@@ -2,3 +2,4 @@
 *.exe
 imgui.ini
 /build
+/vcpkg_installed
