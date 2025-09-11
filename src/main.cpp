@@ -21,8 +21,8 @@ int screenWidth;
 int screenHeight;
 int windowWidth;
 int windowHeight;
-const char* click_sound = "src/sound/click.wav";
-const char* hover_sound = "src/sound/hover.wav";
+const char* click_sound = "sound/click.wav";
+const char* hover_sound = "sound/hover.wav";
 extern bool open_new_project;
 extern bool open_project;
 
@@ -44,7 +44,7 @@ unordered_map<string, string> translations;
 string currentLang = "english";
 
 bool loadLanguage(const string& lang) {
-    ifstream file("src/local/" + lang + ".json");
+    ifstream file("local/" + lang + ".json");
     if (!file.is_open()) return false;
 
     json j;
@@ -75,7 +75,7 @@ void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uin
 
 // load device and decoder(not needed for basic effects)
 void load_audio(){
-    const char* filename = "src/sound/I_Wonder.mp3"; 
+    const char* filename = "sound/I_Wonder.mp3"; 
     if(ma_decoder_init_file(filename, NULL, &decoder) != MA_SUCCESS) {
         printf("Failed to load audio file: %s\n", filename);
         return;
@@ -140,13 +140,13 @@ int main()
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
     ImFontGlyphRangesBuilder builder;
-    builder.AddText("šćžŠĆŽ");           // add the characters you need
+    builder.AddText("đčšćžĐČŠĆŽ");           // add the characters you need
     builder.AddRanges(io.Fonts->GetGlyphRangesDefault()); // add default ASCII
 
     ImVector<ImWchar> glyph_ranges;
     builder.BuildRanges(&glyph_ranges);
-    lucida_big = io.Fonts->AddFontFromFileTTF("src\\fonts\\lucon.ttf", 32.0f, NULL, glyph_ranges.Data);
-    lucida_small = io.Fonts->AddFontFromFileTTF("src\\fonts\\lucon.ttf", 16.0f, NULL, glyph_ranges.Data);
+    lucida_big = io.Fonts->AddFontFromFileTTF("fonts/lucon.ttf", 32.0f, NULL, glyph_ranges.Data);
+    lucida_small = io.Fonts->AddFontFromFileTTF("fonts/lucon.ttf", 16.0f, NULL, glyph_ranges.Data);
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(main_window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);

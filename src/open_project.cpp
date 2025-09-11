@@ -233,5 +233,5 @@ void OpenProject()
     }
     some_was_hovered = some_hovered;
     ImGui::End();
-}
+} 
 

@@ -5,9 +5,6 @@
     "assimp",
     "glm",
     "gtk",
-    "imgui",
-    "glad",
-    "glfw3",
-    "miniaudio"
+    "glfw3"
   ]
 }

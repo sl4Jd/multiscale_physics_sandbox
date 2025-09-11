@@ -1,8 +1,8 @@
-#include<iostream>
+#include <iostream>
 #include <chrono>
 #include <filesystem>
-#include<glad/glad.h>
-#include<GLFW/glfw3.h>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -11,8 +11,6 @@
 #include "includes/camera.h"
 #include "includes/model.h"
 #include <imgui/imgui.h>
-#include <imgui/imgui_impl_glfw.h>
-#include <imgui/imgui_impl_opengl3.h>
 
 
 using namespace std;
@@ -85,11 +83,11 @@ int StartNewProject()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     // build and compile shaders
     // -------------------------
-    Shader shader("src/shaders/vertexshad.vs", "src/shaders/fragmentshad.fs");
-    Shader screenshad("src/shaders/screenvertexshad.vs", "src/shaders/screenfragmentshad.fs");
-    Shader border("src/shaders/vertexshad.vs", "src/shaders/border.fs");
-    Shader boxShader("src/shaders/boxvertexshader.vs", "src/shaders/boxfragmentshader.fs");
-    Shader Modelshader("src/shaders/modelshader.vs", "src/shaders/modelshader.fs");
+    Shader shader("shaders/vertexshad.vs", "shaders/fragmentshad.fs");
+    Shader screenshad("shaders/screenvertexshad.vs", "shaders/screenfragmentshad.fs");
+    Shader border("shaders/vertexshad.vs", "shaders/border.fs");
+    Shader boxShader("shaders/boxvertexshader.vs", "shaders/boxfragmentshader.fs");
+    Shader Modelshader("shaders/modelshader.vs", "shaders/modelshader.fs");
     float cubeVertices[] = {
         // positions          // texture Coords
         -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, // bottom-left
@@ -280,7 +278,7 @@ int StartNewProject()
     glGenTextures(1, &textureID);
     int width, height, nrComponents;
     cout << filesystem::current_path().string() << endl;
-    unsigned char* data = stbi_load("src/resources/textures/marble.jpg", &width, &height, &nrComponents, 0);
+    unsigned char* data = stbi_load("resources/textures/marble.jpg", &width, &height, &nrComponents, 0);
     glBindTexture(GL_TEXTURE_2D, textureID);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
@@ -294,7 +292,7 @@ int StartNewProject()
     glGenTextures(1, &textureID2);
     glBindTexture(GL_TEXTURE_2D, textureID2);
     cout << filesystem::current_path().string() << endl;
-    data = stbi_load("src/resources/textures/metal.png", &width, &height, &nrComponents, 0);
+    data = stbi_load("resources/textures/metal.png", &width, &height, &nrComponents, 0);
     if (data) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
@@ -311,7 +309,7 @@ int StartNewProject()
     unsigned int textureID3;
     glGenTextures(1, &textureID3);
     glBindTexture(GL_TEXTURE_2D, textureID3);
-    data = stbi_load("src/resources/textures/pink_window.png", &width, &height, &nrComponents, 0);
+    data = stbi_load("resources/textures/pink_window.png", &width, &height, &nrComponents, 0);
     if (data) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
@@ -327,12 +325,12 @@ int StartNewProject()
     stbi_image_free(data);
     vector<std::string> faces
     {
-        "src/resources/textures/skybox/right.jpg",
-            "src/resources/textures/skybox/left.jpg",
-            "src/resources/textures/skybox/top.jpg",
-            "src/resources/textures/skybox/bottom.jpg",
-            "src/resources/textures/skybox/front.jpg",
-            "src/resources/textures/skybox/back.jpg"
+        "resources/textures/skybox/right.jpg",
+            "resources/textures/skybox/left.jpg",
+            "resources/textures/skybox/top.jpg",
+            "resources/textures/skybox/bottom.jpg",
+            "resources/textures/skybox/front.jpg",
+            "resources/textures/skybox/back.jpg"
     };
     unsigned int boxtex;
     glGenTextures(1, &boxtex);
@@ -365,7 +363,7 @@ int StartNewProject()
     //textura ce biti fucked ako se ne flipuje
 
     stbi_set_flip_vertically_on_load(true);
-    Model backpack("src/resources/objects/backpack/backpack.obj");
+    Model backpack("resources/objects/backpack/backpack.obj");
     stbi_set_flip_vertically_on_load(false);
     unsigned int framebuffer;
     glGenFramebuffers(1, &framebuffer);
