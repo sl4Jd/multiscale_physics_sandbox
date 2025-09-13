@@ -44,17 +44,17 @@ include_directories(
 
 # Link librariess
 target_link_libraries(${EXECUTABLE_NAME}
-    glfw3
+    glfw
     assimp
     opengl32
 )
 
-# Windows-specific option (hide console)
+# Windows- option (hide console)
 if(WIN32)
     target_link_options(${EXECUTABLE_NAME} PRIVATE -mwindows)
 endif()
 
 # Place executable in project root instead of build/
 set_target_properties(${EXECUTABLE_NAME} PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 )
