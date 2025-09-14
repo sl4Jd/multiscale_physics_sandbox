@@ -10,8 +10,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(EXECUTABLE_NAME project)
 
 # Add include directories
-find_package(glfw3 CONFIG REQUIRED)
 find_package(assimp CONFIG REQUIRED)
+find_package(glfw3 CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
 
 
@@ -44,17 +44,22 @@ include_directories(
 
 # Link librariess
 target_link_libraries(${EXECUTABLE_NAME}
-    glfw3
-    assimp
+    glfw
+    assimp::assimp
     opengl32
 )
 
-# Windows-specific option (hide console)
-if(WIN32)
-    target_link_options(${EXECUTABLE_NAME} PRIVATE -mwindows)
-endif()
+# Putting needed directories in bin
+set(RESOURCE_FOLDERS local fonts resources sound shaders projects)
+
+foreach(folder IN LISTS RESOURCE_FOLDERS)
+    add_custom_command(TARGET project POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_SOURCE_DIR}/${folder}
+                $<TARGET_FILE_DIR:project>/${folder})
+endforeach()
 
 # Place executable in project root instead of build/
 set_target_properties(${EXECUTABLE_NAME} PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 )

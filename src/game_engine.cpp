@@ -34,7 +34,7 @@ float lastFrame = 0.0f;
 
 //GUI
 
-int StartNewProject()
+void StartNewProject()
 {
 
     // glfw: initialize and configure
@@ -52,7 +52,7 @@ int StartNewProject()
     {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
-        return -1;
+        return;
     }
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
@@ -70,7 +70,7 @@ int StartNewProject()
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         std::cout << "Failed to initialize GLAD" << std::endl;
-        return -1;
+        return;
     }
 
     // tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
@@ -466,6 +466,7 @@ int StartNewProject()
         }
         glBindVertexArray(0);
 
+        
         glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
         glStencilMask(0x00);
         glDepthFunc(GL_ALWAYS);
@@ -516,7 +517,7 @@ int StartNewProject()
     }
     
     glfwTerminate();
-    return 0;
+    return;
 }
 
 void processInput(GLFWwindow* window)

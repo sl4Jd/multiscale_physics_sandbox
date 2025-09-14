@@ -2,9 +2,8 @@
 #include "appstate.h"
 #include "game_engine.h"
 #include "main.h"
-
+#include "open_project.h"
 #include <GLFW/glfw3.h>
-
 #include <fstream>
 #include <filesystem>
 #include <iostream>
@@ -41,7 +40,7 @@ static ImGuiID some_hovered = 0;
 static ImGuiID some_was_hovered = 0;
 
 vector<string> labels;
-int count;
+int counts;
 
 void save_edit(){
     already_named = false;
@@ -51,7 +50,7 @@ void save_edit(){
     }
     else{
         name_is_empty = false;
-        for(int j = 0; j < count; j++) {
+        for(int j = 0; j < counts; j++) {
             if(labels[j] == editBuffer && j != selectedIndex) {
                 already_named = true;
                 justActivated = true;
@@ -77,7 +76,7 @@ void load_project_files(){
     catch (const filesystem::filesystem_error& e) {
         std::cerr << "Error: " << e.what() << std::endl;
     }
-    count = labels.size();
+    counts = labels.size();
     load_projects = true;
 }
 void DrawSelectableBoxes()
@@ -85,7 +84,7 @@ void DrawSelectableBoxes()
     if(!load_projects){
         load_project_files();
     }
-    for (int i = 0; i < count; i++)
+    for (int i = 0; i < counts; i++)
     {
         ImVec2 itemSize(300, 80);
         if(editing && selectedIndex == i) {
@@ -161,7 +160,7 @@ void DrawSelectableBoxes()
             ma_engine_play_sound(&engine, click_sound, NULL);
             filesystem::remove("projects/" + labels[selectedIndex] + ".txt");
             labels.erase(labels.begin() + selectedIndex);
-            count--;
+            counts--;
             selectedIndex = -1;
             ImGui::CloseCurrentPopup();
         }
