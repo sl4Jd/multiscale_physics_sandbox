@@ -1,5 +1,5 @@
 {
-  "name": "my-project",
+  "name": "Multiscale_sandbox",
   "version-string": "0.1.0",
   "dependencies": [
     "assimp",
