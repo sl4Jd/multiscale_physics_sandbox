@@ -45,7 +45,6 @@ include_directories(
 # Link librariess
 target_link_libraries(${EXECUTABLE_NAME}
     glfw
-<<<<<<< HEAD
     assimp
     opengl32
 )
@@ -54,10 +53,6 @@ target_link_libraries(${EXECUTABLE_NAME}
 if(WIN32)
     target_link_options(${EXECUTABLE_NAME} PRIVATE -mwindows)
 endif()
-=======
-    assimp::assimp
-    opengl32
-)
 
 # Putting needed directories in bin
 set(RESOURCE_FOLDERS local fonts resources sound shaders projects)
@@ -68,9 +63,8 @@ foreach(folder IN LISTS RESOURCE_FOLDERS)
                 ${CMAKE_SOURCE_DIR}/${folder}
                 $<TARGET_FILE_DIR:project>/${folder})
 endforeach()
->>>>>>> 0053e8cf0764d2722f90b3858a38bae904b6933a
 
-# Place executable in project root instead of build/
+# Place executable in build/bin instead of project root
 set_target_properties(${EXECUTABLE_NAME} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 )
