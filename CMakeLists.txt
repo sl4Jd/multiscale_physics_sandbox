@@ -12,7 +12,6 @@ set(EXECUTABLE_NAME project)
 # Add include directories
 find_package(assimp CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
-find_package(glm CONFIG REQUIRED)
 
 
 # Source files
