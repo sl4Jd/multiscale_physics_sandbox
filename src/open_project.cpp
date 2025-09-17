@@ -124,12 +124,18 @@ void DrawSelectableBoxes()
             if(selectedIndex == i && !editing)
             {
                 ImGui::SameLine();
-                if(ImGui::Button(tr("delete").c_str(), ImVec2(150, 40))) {
+                if(ImGui::Button(tr("delete").c_str())) {
                     ma_engine_play_sound(&engine, click_sound, NULL);
                     ImGui::OpenPopup(tr("menu.delete_popup").c_str());
                 }
+                if (ImGui::IsItemHovered())
+                {
+                    ImGuiID id = ImGui::GetItemID();
+                    if(some_was_hovered != id) ma_engine_play_sound(&engine, hover_sound, NULL);
+                    some_hovered = id;
+                }
                 ImGui::SameLine();
-                if (ImGui::Button(tr("rename").c_str(), ImVec2(150, 40)))
+                if (ImGui::Button(tr("rename").c_str()))
                 {
                     ma_engine_play_sound(&engine, click_sound, NULL);
                     editing = true;
@@ -149,13 +155,13 @@ void DrawSelectableBoxes()
     if (ImGui::BeginPopupModal(tr("menu.delete_popup").c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize))
     {
         ImGui::Text(tr("delete.confirm").c_str(), labels[selectedIndex].c_str());
-        if (ImGui::Button(tr("no").c_str(), ImVec2(150, 40)))
+        if (ImGui::Button(tr("no").c_str()))
         {
             ma_engine_play_sound(&engine, click_sound, NULL);
             ImGui::CloseCurrentPopup();
         }
         ImGui::SameLine();
-        if (ImGui::Button(tr("yes").c_str(), ImVec2(150, 40)))
+        if (ImGui::Button(tr("yes").c_str()))
         {
             ma_engine_play_sound(&engine, click_sound, NULL);
             filesystem::remove("projects/" + labels[selectedIndex] + ".txt");
@@ -187,7 +193,8 @@ void OpenProject()
     }
     ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 100);
     ImGui::SetCursorPosX(50);
-    if (ImGui::Button(tr("menu.back").c_str(), ImVec2(200, 70)))
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(45.0f, 20.0f));
+    if (ImGui::Button(tr("menu.back").c_str()))
     {
         ma_engine_play_sound(&engine, click_sound, NULL);
         if(editing){
@@ -207,7 +214,7 @@ void OpenProject()
     ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 100);
     ImGui::SetCursorPosX(ImGui::GetWindowSize().x - 250); 
 
-    if (ImGui::Button(tr("menu.open").c_str(), ImVec2(200, 70)))
+    if (ImGui::Button(tr("menu.open").c_str()))
     {
         ma_engine_play_sound(&engine, click_sound, NULL);
         if(editing){
@@ -230,6 +237,7 @@ void OpenProject()
         if(some_was_hovered != id) ma_engine_play_sound(&engine, hover_sound, NULL);
         some_hovered = id;
     }
+    ImGui::PopStyleVar();
     some_was_hovered = some_hovered;
     ImGui::End();
 } 
