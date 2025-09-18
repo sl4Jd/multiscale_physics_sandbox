@@ -38,6 +38,7 @@ static bool justActivated = false;
 
 static ImGuiID some_hovered = 0;
 static ImGuiID some_was_hovered = 0;
+static bool hovered_inside_select = false;
 
 vector<string> labels;
 int counts;
@@ -86,7 +87,7 @@ void DrawSelectableBoxes()
     }
     for (int i = 0; i < counts; i++)
     {
-        ImVec2 itemSize(300, 80);
+        ImVec2 itemSize(0, 80);
         if(editing && selectedIndex == i) {
             if (justActivated) {
                 ImGui::SetKeyboardFocusHere();
@@ -105,7 +106,12 @@ void DrawSelectableBoxes()
             }
         }
         else {
-            if (ImGui::Selectable(labels[i].c_str(), selectedIndex == i, 0, itemSize))
+            ImGui::PushStyleColor(ImGuiCol_Header, IM_COL32(0,0,0,0));
+            ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.0f, 0.5f));
+            bool was_selected = ImGui::Selectable(labels[i].c_str(), selectedIndex == i, 0, itemSize);
+            ImGui::PopStyleVar();
+            ImGui::PopStyleColor();
+            if (was_selected)
             {
                 ma_engine_play_sound(&engine, click_sound, NULL);
                 if(editing){
@@ -117,13 +123,23 @@ void DrawSelectableBoxes()
             }
             if(ImGui::IsItemHovered())
             {
+                if(!hovered_inside_select){
                 ImGuiID id = ImGui::GetItemID();
                 if(some_was_hovered != id) ma_engine_play_sound(&engine, hover_sound, NULL);
                 some_hovered = id;
+                }
             }
             if(selectedIndex == i && !editing)
             {
-                ImGui::SameLine();
+                hovered_inside_select = false;
+                ImVec2 min = ImGui::GetItemRectMin();
+                ImVec2 max = ImGui::GetItemRectMax();
+                ImGui::GetWindowDrawList()->AddRect(min, max, IM_COL32(255, 255, 0, 255), 4.0f, 0, 5.0f);
+                ImVec2 pos = ImGui::GetCursorPos(); 
+                pos.y -= 50;
+                pos.x = max.x - 350;              
+                ImGui::SetCursorPos(pos);
+                ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(0, 255, 0, 255));
                 if(ImGui::Button(tr("delete").c_str())) {
                     ma_engine_play_sound(&engine, click_sound, NULL);
                     ImGui::OpenPopup(tr("menu.delete_popup").c_str());
@@ -133,6 +149,7 @@ void DrawSelectableBoxes()
                     ImGuiID id = ImGui::GetItemID();
                     if(some_was_hovered != id) ma_engine_play_sound(&engine, hover_sound, NULL);
                     some_hovered = id;
+                    hovered_inside_select = true;
                 }
                 ImGui::SameLine();
                 if (ImGui::Button(tr("rename").c_str()))
@@ -148,9 +165,12 @@ void DrawSelectableBoxes()
                     ImGuiID id = ImGui::GetItemID();
                     if(some_was_hovered != id) ma_engine_play_sound(&engine, hover_sound, NULL);
                     some_hovered = id;
+                    hovered_inside_select = true;
                 }
+                ImGui::PopStyleColor();
             }
         }
+        ImGui::Dummy(ImVec2(0, 15));
     }
     if (ImGui::BeginPopupModal(tr("menu.delete_popup").c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize))
     {
@@ -171,7 +191,9 @@ void DrawSelectableBoxes()
             ImGui::CloseCurrentPopup();
         }
         ImGui::EndPopup();
+
     }
+    
 }
 void OpenProject()
 {
@@ -193,8 +215,7 @@ void OpenProject()
     }
     ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 100);
     ImGui::SetCursorPosX(50);
-    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(45.0f, 20.0f));
-    if (ImGui::Button(tr("menu.back").c_str()))
+    if (ImGui::Button(tr("menu.back").c_str(), ImVec2(200, 70)))
     {
         ma_engine_play_sound(&engine, click_sound, NULL);
         if(editing){
@@ -214,7 +235,7 @@ void OpenProject()
     ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 100);
     ImGui::SetCursorPosX(ImGui::GetWindowSize().x - 250); 
 
-    if (ImGui::Button(tr("menu.open").c_str()))
+    if (ImGui::Button(tr("menu.open").c_str(), ImVec2(200, 70)))
     {
         ma_engine_play_sound(&engine, click_sound, NULL);
         if(editing){
@@ -237,7 +258,6 @@ void OpenProject()
         if(some_was_hovered != id) ma_engine_play_sound(&engine, hover_sound, NULL);
         some_hovered = id;
     }
-    ImGui::PopStyleVar();
     some_was_hovered = some_hovered;
     ImGui::End();
 } 
