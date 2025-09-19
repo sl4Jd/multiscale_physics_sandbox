@@ -19,9 +19,9 @@ extern AppState currentAppState;
 
 extern int windowWidth;
 extern int windowHeight;
-extern ma_engine engine;
-extern const char* click_sound;
-extern const char* hover_sound;
+
+extern ma_sound clickSound;
+extern ma_sound hoverSound;
 
 extern unordered_map<string, string> translations;
 
@@ -63,7 +63,7 @@ void CreateProject()
     ImGui::SetCursorPosX(50);
     if (ImGui::Button(tr("menu.back").c_str(), ImVec2(200, 70)))
     {
-        ma_engine_play_sound(&engine, click_sound, NULL);
+        ma_sound_start(&clickSound);
         no_name = false;
         name_exists = false;
         currentAppState = AppState::MainMenu;
@@ -71,7 +71,7 @@ void CreateProject()
     if(ImGui::IsItemHovered())
     {
         ImGuiID id = ImGui::GetItemID();
-        if(some_was_hovered != id) ma_engine_play_sound(&engine, hover_sound, NULL);
+        if(some_was_hovered != id) ma_sound_start(&hoverSound);
         some_hovered = id;
     }
     ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 100);
@@ -79,7 +79,7 @@ void CreateProject()
 
     if (ImGui::Button(tr("menu.create").c_str(), ImVec2(200, 70)))
     {
-        ma_engine_play_sound(&engine, click_sound, NULL);
+        ma_sound_start(&clickSound);
         if (inputBuffer[0] == '\0') {
             no_name = true;
         }
@@ -106,7 +106,7 @@ void CreateProject()
     if(ImGui::IsItemHovered())
     {
         ImGuiID id = ImGui::GetItemID();
-        if(some_was_hovered != id) ma_engine_play_sound(&engine, hover_sound, NULL);
+        if(some_was_hovered != id) ma_sound_start(&hoverSound);
         some_hovered = id;
     }
     some_was_hovered = some_hovered;

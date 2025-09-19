@@ -15,5 +15,7 @@
   "rename": "Rename",
   "menu.delete_popup": "Delete Confirmation",
   "delete.confirm": "Are you sure you want to delete the project        \n '%s'?",
-  "save": "Save"
+  "save": "Save",
+  "master_volume": "Master Volume",
+  "UI_volume": "UI Volume"
 }

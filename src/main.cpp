@@ -21,8 +21,12 @@ int screenWidth;
 int screenHeight;
 int windowWidth;
 int windowHeight;
+
 const char* click_sound = "sound/click.wav";
 const char* hover_sound = "sound/hover.wav";
+
+ma_sound clickSound;
+ma_sound hoverSound;
 extern bool open_new_project;
 extern bool open_project;
 
@@ -157,7 +161,8 @@ int main()
         printf("Failed to init engine\n");
         return -1;
     }
-
+    ma_sound_init_from_file(&engine, "sound/click.wav", 0, NULL, NULL, &clickSound);
+    ma_sound_init_from_file(&engine, "sound/hover.wav", 0, NULL, NULL, &hoverSound);
     // Main loop
     while (!glfwWindowShouldClose(main_window))
     {
