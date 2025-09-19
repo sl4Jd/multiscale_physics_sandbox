@@ -86,7 +86,7 @@ void CreateProject()
         else {
             no_name = false;
             string projectName = string(inputBuffer);
-            string projectPath = "projects/" + projectName + ".txt";
+            string projectPath = "assets/projects/" + projectName + ".txt";
             if(filesystem::exists(projectPath)) {
                 name_exists = true;
             }

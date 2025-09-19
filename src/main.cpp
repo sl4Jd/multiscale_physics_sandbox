@@ -22,8 +22,8 @@ int screenHeight;
 int windowWidth;
 int windowHeight;
 
-const char* click_sound = "sound/click.wav";
-const char* hover_sound = "sound/hover.wav";
+const char* click_sound = "assets/sound/click.wav";
+const char* hover_sound = "assets/sound/hover.wav";
 
 ma_sound clickSound;
 ma_sound hoverSound;
@@ -48,7 +48,7 @@ unordered_map<string, string> translations;
 string currentLang = "english";
 
 bool loadLanguage(const string& lang) {
-    ifstream file("local/" + lang + ".json");
+    ifstream file("assets/local/" + lang + ".json");
     if (!file.is_open()) return false;
 
     json j;
@@ -79,7 +79,7 @@ void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uin
 
 // load device and decoder(not needed for basic effects)
 void load_audio(){
-    const char* filename = "sound/I_Wonder.mp3"; 
+    const char* filename = "assets/sound/I_Wonder.mp3"; 
     if(ma_decoder_init_file(filename, NULL, &decoder) != MA_SUCCESS) {
         printf("Failed to load audio file: %s\n", filename);
         return;
@@ -149,8 +149,8 @@ int main()
 
     ImVector<ImWchar> glyph_ranges;
     builder.BuildRanges(&glyph_ranges);
-    lucida_big = io.Fonts->AddFontFromFileTTF("fonts/lucon.ttf", 32.0f, NULL, glyph_ranges.Data);
-    lucida_small = io.Fonts->AddFontFromFileTTF("fonts/lucon.ttf", 16.0f, NULL, glyph_ranges.Data);
+    lucida_big = io.Fonts->AddFontFromFileTTF("assets/fonts/lucon.ttf", 32.0f, NULL, glyph_ranges.Data);
+    lucida_small = io.Fonts->AddFontFromFileTTF("assets/fonts/lucon.ttf", 16.0f, NULL, glyph_ranges.Data);
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(main_window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
@@ -161,8 +161,8 @@ int main()
         printf("Failed to init engine\n");
         return -1;
     }
-    ma_sound_init_from_file(&engine, "sound/click.wav", 0, NULL, NULL, &clickSound);
-    ma_sound_init_from_file(&engine, "sound/hover.wav", 0, NULL, NULL, &hoverSound);
+    ma_sound_init_from_file(&engine, "assets/sound/click.wav", 0, NULL, NULL, &clickSound);
+    ma_sound_init_from_file(&engine, "assets/sound/hover.wav", 0, NULL, NULL, &hoverSound);
     // Main loop
     while (!glfwWindowShouldClose(main_window))
     {

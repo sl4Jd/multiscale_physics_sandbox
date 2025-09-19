@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Output executable name
-set(EXECUTABLE_NAME project)
+set(EXECUTABLE_NAME mult-scale-sandbox)
 
 # Add include directories
 find_package(assimp CONFIG REQUIRED)
@@ -53,15 +53,10 @@ if(WIN32)
     target_link_options(${EXECUTABLE_NAME} PRIVATE -mwindows)
 endif()
 
-# Putting needed directories in bin
-set(RESOURCE_FOLDERS local fonts resources sound shaders projects)
-
-foreach(folder IN LISTS RESOURCE_FOLDERS)
-    add_custom_command(TARGET project POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-                ${CMAKE_SOURCE_DIR}/${folder}
-                $<TARGET_FILE_DIR:project>/${folder})
-endforeach()
+add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/assets
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/user_data
+)
 
 # Place executable in build/bin instead of project root
 set_target_properties(${EXECUTABLE_NAME} PROPERTIES
