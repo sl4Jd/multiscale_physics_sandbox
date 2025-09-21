@@ -3,10 +3,13 @@
 #include <unordered_map>
 #include <string>
 #include <iostream>
-
+#include <json.hpp>
+#include <fstream>
+#include <vector>
 #include "appstate.h"
 #include "main.h"
 
+using json = nlohmann::json;
 using namespace std;
 
 extern AppState currentAppState;
@@ -27,24 +30,30 @@ static ImGuiID some_hovered = 0;
 static ImGuiID some_was_hovered = 0;
 static bool combo_open = false;
 
+extern json settings;
+
+extern vector<const char*> languages;
+extern int current_lang_index;
+
 static void ShowLanguageSelector() {
     ImGui::PushFont(lucida_small);
-    static int current_lang = 0; // Index of the selected language
-    const char* languages[] = { "english", "srpski"};
     ImGui::SetCursorPosX(windowWidth/8*7);
     ImGui::SetCursorPosY(100);
     ImGui::PushItemWidth(100);
-    if (ImGui::BeginCombo("##LanguageCombo", languages[current_lang])) {
+    if (ImGui::BeginCombo("##LanguageCombo", languages[current_lang_index])) {
         if(combo_open == false) {
             combo_open = true;
             ma_sound_start(&clickSound);
         }
-        for (int n = 0; n < IM_ARRAYSIZE(languages); n++) {
-            bool is_selected = (current_lang == n);
+        for (int n = 0; n < languages.size(); n++) {
+            bool is_selected = (current_lang_index == n);
             if (ImGui::Selectable(languages[n], is_selected, ImGuiSelectableFlags_None, ImVec2(0, 0))) {
                 ma_sound_start(&clickSound);
-                current_lang = n; // update selected language
-                loadLanguage(languages[current_lang]);
+                current_lang_index = n; // update selected language
+                settings["language"] = languages[current_lang_index];
+                ofstream file("user_data/user_settings/settings.json");
+                file << settings.dump(3);
+                loadLanguage(languages[current_lang_index]);
             }
             if (ImGui::IsItemHovered()) {
                 ImGuiID id = ImGui::GetItemID();

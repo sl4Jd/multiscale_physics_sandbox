@@ -8,6 +8,7 @@
 #include <miniaudio/miniaudio.h>
 #include <json.hpp>
 #include <fstream>
+#include <vector>
 
 #include "game_engine.h"
 #include "create_project.h"
@@ -17,6 +18,10 @@
 #include "main_menu.h"
 #include "settings.h"
 
+
+using json = nlohmann::json;
+using namespace std;
+
 int screenWidth;
 int screenHeight;
 int windowWidth;
@@ -24,6 +29,9 @@ int windowHeight;
 
 const char* click_sound = "assets/sound/click.wav";
 const char* hover_sound = "assets/sound/hover.wav";
+
+vector<const char*> languages = { "english", "srpski"};
+int current_lang_index = 0;
 
 ma_sound clickSound;
 ma_sound hoverSound;
@@ -41,12 +49,25 @@ static ma_decoder decoder;
 static ma_device device;
 ma_engine engine;
 
-using json = nlohmann::json;
-using namespace std;
-
 unordered_map<string, string> translations;
 string currentLang = "english";
 
+json settings;
+
+void loadsettings() {
+    ifstream file("user_data/user_settings/settings.json");
+    file >> settings;
+    if (settings.contains("language")) {
+        currentLang = settings["language"];
+        for(int i = 0; i < languages.size(); i++) {
+            if (languages[i] == currentLang) {
+                current_lang_index = i;
+                break;
+            }
+        }
+    }
+    file.close();
+}
 bool loadLanguage(const string& lang) {
     ifstream file("assets/local/" + lang + ".json");
     if (!file.is_open()) return false;
@@ -65,7 +86,7 @@ string tr(const std::string& key) {
     if (translations.count(key)) return translations[key];
     return key; // fallback
 }
-void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount) {
+static void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount) {
     ma_decoder* pDecoder = (ma_decoder*)pDevice->pUserData;
     if (pDecoder == NULL) {
         return;
@@ -78,7 +99,7 @@ void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uin
 }
 
 // load device and decoder(not needed for basic effects)
-void load_audio(){
+static void load_audio(){
     const char* filename = "assets/sound/I_Wonder.mp3"; 
     if(ma_decoder_init_file(filename, NULL, &decoder) != MA_SUCCESS) {
         printf("Failed to load audio file: %s\n", filename);
@@ -111,6 +132,7 @@ void load_audio(){
 
 int main()
 {
+    loadsettings();
     // Setup GLFW
     if (!glfwInit())
         return 1;
