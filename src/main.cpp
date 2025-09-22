@@ -49,6 +49,9 @@ static ma_decoder decoder;
 static ma_device device;
 ma_engine engine;
 
+float master_volume = 1.0f;
+float ui_volume = 1.0f;
+
 unordered_map<string, string> translations;
 string currentLang = "english";
 
@@ -66,6 +69,10 @@ void loadsettings() {
             }
         }
     }
+    master_volume = settings["master_volume"];
+    ui_volume = settings["UI_volume"];
+    ma_sound_set_volume(&clickSound, powf(master_volume, 3.0f)*powf(ui_volume, 3.0f));
+    ma_sound_set_volume(&hoverSound, powf(master_volume, 3.0f)*powf(ui_volume, 3.0f));
     file.close();
 }
 bool loadLanguage(const string& lang) {
@@ -132,10 +139,20 @@ static void load_audio(){
 
 int main()
 {
+    //load_audio();
+    if (ma_engine_init(NULL, &engine) != MA_SUCCESS) {
+        printf("Failed to init engine\n");
+        return -1;
+    }
+    ma_sound_init_from_file(&engine, "assets/sound/click.wav", 0, NULL, NULL, &clickSound);
+    ma_sound_init_from_file(&engine, "assets/sound/hover.wav", 0, NULL, NULL, &hoverSound);
     loadsettings();
+
+    loadLanguage(currentLang);
     // Setup GLFW
     if (!glfwInit())
         return 1;
+
 
     // Setup OpenGL version (3.0+)
     const char* glsl_version = "#version 130";
@@ -176,15 +193,6 @@ int main()
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(main_window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
-    loadLanguage(currentLang);
-    // not needed for basic effects
-    //load_audio();
-    if (ma_engine_init(NULL, &engine) != MA_SUCCESS) {
-        printf("Failed to init engine\n");
-        return -1;
-    }
-    ma_sound_init_from_file(&engine, "assets/sound/click.wav", 0, NULL, NULL, &clickSound);
-    ma_sound_init_from_file(&engine, "assets/sound/hover.wav", 0, NULL, NULL, &hoverSound);
     // Main loop
     while (!glfwWindowShouldClose(main_window))
     {

@@ -22,23 +22,23 @@ set(SOURCES
     src/create_project.cpp
     src/settings.cpp
     src/game_engine.cpp
-    extern_deps/imgui/image_implementation.cpp
-    extern_deps/imgui/imgui.cpp
-    extern_deps/imgui/imgui_widgets.cpp
-    extern_deps/imgui/imgui_tables.cpp
-    extern_deps/imgui/imgui_draw.cpp
-    extern_deps/imgui/imgui_impl_opengl3.cpp
-    extern_deps/imgui/imgui_impl_glfw.cpp
-    extern_deps/imgui/imgui_demo.cpp
-    extern_deps/glad/glad.c
-    extern_deps/miniaudio/miniaudio.c
+    vendored_extern_deps/imgui/image_implementation.cpp
+    vendored_extern_deps/imgui/imgui.cpp
+    vendored_extern_deps/imgui/imgui_widgets.cpp
+    vendored_extern_deps/imgui/imgui_tables.cpp
+    vendored_extern_deps/imgui/imgui_draw.cpp
+    vendored_extern_deps/imgui/imgui_impl_opengl3.cpp
+    vendored_extern_deps/imgui/imgui_impl_glfw.cpp
+    vendored_extern_deps/imgui/imgui_demo.cpp
+    vendored_extern_deps/glad/glad.c
+    vendored_extern_deps/miniaudio/miniaudio.c
 )
 
 # Add the executable
 add_executable(${EXECUTABLE_NAME} ${SOURCES})
 
 include_directories(
-    ${CMAKE_SOURCE_DIR}/extern_deps
+    ${CMAKE_SOURCE_DIR}/vendored_extern_deps
 )
 
 # Link librariess

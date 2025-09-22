@@ -1,11 +1,14 @@
 #include <imgui/imgui.h>
 #include <miniaudio/miniaudio.h>
+#include <json.hpp>
+#include <fstream>
 #include <iostream>
 #include <string>
 #include <math.h>
 #include "main.h"
 #include "appstate.h"
 
+using json = nlohmann::json;
 using namespace std;
 
 extern AppState currentAppState;
@@ -18,13 +21,14 @@ extern string tr(const string& key);
 extern ma_sound clickSound;
 extern ma_sound hoverSound;
 
+extern json settings;
+
 static ImGuiID some_hovered = 0;
 static ImGuiID some_was_hovered = 0;
 
-static struct SettingsData {
-    float master_volume = 1.0f;
-    float ui_volume = 1.0f;
-} settings;
+extern float master_volume;
+extern float ui_volume;
+
 void Settings(){
     ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
     ImGui::SetNextWindowSize(ImVec2(windowWidth, windowHeight), ImGuiCond_Always);
@@ -39,8 +43,8 @@ void Settings(){
     some_hovered = 0;
     ImGui::SetCursorPosY(50);
     ImGui::SetCursorPosX(50);
-    ImGui::SliderFloat(tr("master_volume").c_str(), &settings.master_volume, 0.0f, 1.0f);
-    ImGui::SliderFloat(tr("UI_volume").c_str(), &settings.ui_volume, 0.0f, 1.0f);
+    ImGui::SliderFloat(tr("master_volume").c_str(), &master_volume, 0.0f, 1.0f);
+    ImGui::SliderFloat(tr("UI_volume").c_str(), &ui_volume, 0.0f, 1.0f);
     ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 100);
     ImGui::SetCursorPosX(50);
     if (ImGui::Button(tr("menu.back").c_str(), ImVec2(200, 70))) {
@@ -57,8 +61,12 @@ void Settings(){
 
     if (ImGui::Button(tr("save").c_str(), ImVec2(200, 70))) {
         ma_sound_start(&clickSound);
-        ma_sound_set_volume(&clickSound, powf(settings.master_volume, 3.0f)*powf(settings.ui_volume, 3.0f));
-        ma_sound_set_volume(&hoverSound, powf(settings.master_volume, 3.0f)*powf(settings.ui_volume, 3.0f));
+        ma_sound_set_volume(&clickSound, powf(master_volume, 3.0f)*powf(ui_volume, 3.0f));
+        ma_sound_set_volume(&hoverSound, powf(master_volume, 3.0f)*powf(ui_volume, 3.0f));
+        settings["master_volume"] = master_volume;
+        settings["UI_volume"] = ui_volume;
+        ofstream output("user_data/user_settings/settings.json");
+        output << settings.dump(4);
     }
     if (ImGui::IsItemHovered()) {
         ImGuiID id = ImGui::GetItemID();
