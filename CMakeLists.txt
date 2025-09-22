@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Output executable name
-set(EXECUTABLE_NAME mult-scale-sandbox)
+set(EXECUTABLE_NAME multi-scale-sandbox)
 
 # Add include directories
 find_package(assimp CONFIG REQUIRED)

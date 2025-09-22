@@ -52,7 +52,7 @@ static void ShowLanguageSelector() {
                 current_lang_index = n; // update selected language
                 settings["language"] = languages[current_lang_index];
                 ofstream file("user_data/user_settings/settings.json");
-                file << settings.dump(3);
+                file << settings.dump(4);
                 loadLanguage(languages[current_lang_index]);
             }
             if (ImGui::IsItemHovered()) {

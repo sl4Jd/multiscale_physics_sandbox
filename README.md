@@ -8,7 +8,9 @@ git clone https://github.com/sl4Jd/game_engine.git
 ```bash
 cd game_engine
 ```
-## BUILD FOR VISUAL STUDIO
+## BUILD DEPS
+
+### BUILD FOR VISUAL STUDIO
 be sure to have VCPKG_ROOT as environmental variable or put full path in CMakePresets.json file 
 ```bash
 cmake -B build -S .
@@ -16,7 +18,7 @@ cmake -B build -S .
 ```bash
 cmake --build build
 ```
-## BUILD WITH MSVC AND VCPKG
+### BUILD WITH MSVC AND VCPKG
 if you like vcpkg but use some text editor and dont want visual studio bullshit  
 i dont recommend using gcc compiler as vcpkg's x64-mingw triplets are quite unreliable  
 all commands must be in developer cmd for visual studio  
@@ -24,8 +26,8 @@ be sure to have VCPKG_ROOT as environmental variable or put full path in CMakePr
 ```bash
 cmake --preset vcpkg
 ```
-### Build app
+## BUILD APP
 ```bash
 cmake --build build
 ```
-you shoud now have project.exe in build/bin directory
+you shoud now have multi-scale-sandbox.exe in build/bin directory
