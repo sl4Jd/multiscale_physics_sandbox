@@ -32,6 +32,7 @@ set(SOURCES
     vendored_extern_deps/imgui/imgui_demo.cpp
     vendored_extern_deps/glad/glad.c
     vendored_extern_deps/miniaudio/miniaudio.c
+    vendored_extern_deps/miniz/miniz.c
 )
 
 # Add the executable

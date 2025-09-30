@@ -92,7 +92,7 @@ void ShowStartWindow() {
 
     ImGui::SetCursorPosY(50);
     ImGui::SetCursorPosX(windowWidth/2 - 250);
-    ImGui::Text("Game Engine version 0.1.5");
+    ImGui::Text("Multi-scale Physics Sandbox");
     some_hovered = 0;
     ShowLanguageSelector();
     ImGui::Spacing();

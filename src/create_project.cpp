@@ -10,6 +10,7 @@
 #include <iostream>
 #include <string>
 #include <miniaudio/miniaudio.h>
+#include <miniz/miniz.h>
 
 using namespace std;
 
@@ -86,7 +87,7 @@ void CreateProject()
         else {
             no_name = false;
             string projectName = string(inputBuffer);
-            string projectPath = "assets/projects/" + projectName + ".txt";
+            string projectPath = "user_data/projects/" + projectName + ".txt";
             if(filesystem::exists(projectPath)) {
                 name_exists = true;
             }
