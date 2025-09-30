@@ -3,10 +3,10 @@ hopefully this turns into something cool before i start uni
 # BUILDING FROM SOURCE
 
 ```bash
-git clone https://github.com/sl4Jd/game_engine.git
+git clone https://github.com/sl4Jd/multiscale_physics_sandbox.git
 ```
 ```bash
-cd game_engine
+cd multiscale_physics_sandbox
 ```
 ## BUILD DEPS
 
