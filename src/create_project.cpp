@@ -1,8 +1,9 @@
-#include <imgui/imgui.h>
+#include "imgui/imgui.h"
 #include "appstate.h"
 #include "game_engine.h"
 #include "main.h"
 #include "create_project.h"
+#include "zip_utils.h"
 
 #include <GLFW/glfw3.h>
 #include <unordered_map>
@@ -10,7 +11,7 @@
 #include <filesystem>
 #include <iostream>
 #include <string>
-#include <miniaudio/miniaudio.h>
+#include "miniaudio/miniaudio.h"
 
 using namespace std;
 
@@ -87,17 +88,13 @@ void CreateProject()
         else {
             no_name = false;
             string projectName = string(inputBuffer);
-            string projectPath = "user_data/projects/" + projectName + ".txt";
+            string projectPath = "user_data/projects/" + projectName + ".msps";
             if(filesystem::exists(projectPath)) {
                 name_exists = true;
             }
             else {
                 name_exists = false;
-                ofstream projectFile(projectPath);
-                if (projectFile.is_open()) {
-                    projectFile << projectName << endl;
-                    projectFile.close();
-                }
+                CreateZipFile(projectName.c_str());
                 glfwSetWindowShouldClose(main_window, true);
                 open_new_project = true;
             }

@@ -1,3 +1,4 @@
 #pragma once
+#include <string>
 
-void UnzipFile(const std::string& zipPath);
+void CreateZipFile(const std::string& zipPath);

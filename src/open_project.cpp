@@ -1,4 +1,4 @@
-#include <imgui/imgui.h>
+#include "imgui/imgui.h"
 #include "appstate.h"
 #include "game_engine.h"
 #include "main.h"
@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
-#include <miniaudio/miniaudio.h>
+#include "miniaudio/miniaudio.h"
 
 using namespace std;
 
@@ -58,7 +58,7 @@ void save_edit(){
             }
         }
         if(!already_named) {
-            filesystem::rename("user_data/projects/" + labels[selectedIndex] + ".txt", "user_data/projects/" + string(editBuffer) + ".txt");
+            filesystem::rename("user_data/projects/" + labels[selectedIndex] + ".msps", "user_data/projects/" + string(editBuffer) + ".msps");
             labels[selectedIndex] = editBuffer;
             editing = false;
             name_is_empty = false;
@@ -184,7 +184,7 @@ void DrawSelectableBoxes()
         if (ImGui::Button(tr("yes").c_str()))
         {
             ma_sound_start(&clickSound);
-            filesystem::remove("user_data/projects/" + labels[selectedIndex] + ".txt");
+            filesystem::remove("user_data/projects/" + labels[selectedIndex] + ".msps");
             labels.erase(labels.begin() + selectedIndex);
             counts--;
             selectedIndex = -1;
