@@ -7,6 +7,7 @@
 #include <math.h>
 #include "main.h"
 #include "appstate.h"
+#include "settings.h"
 
 using json = nlohmann::json;
 using namespace std;

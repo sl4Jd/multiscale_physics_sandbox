@@ -22,6 +22,7 @@ set(SOURCES
     src/create_project.cpp
     src/settings.cpp
     src/game_engine.cpp
+    src/zip_utils.cpp
     vendored_extern_deps/imgui/image_implementation.cpp
     vendored_extern_deps/imgui/imgui.cpp
     vendored_extern_deps/imgui/imgui_widgets.cpp
@@ -40,6 +41,7 @@ add_executable(${EXECUTABLE_NAME} ${SOURCES})
 
 include_directories(
     ${CMAKE_SOURCE_DIR}/vendored_extern_deps
+    ${CMAKE_SOURCE_DIR}/src/includes
 )
 
 # Link librariess

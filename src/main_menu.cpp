@@ -8,6 +8,7 @@
 #include <vector>
 #include "appstate.h"
 #include "main.h"
+#include "main_menu.h"
 
 using json = nlohmann::json;
 using namespace std;

@@ -2,6 +2,7 @@
 #include "appstate.h"
 #include "game_engine.h"
 #include "main.h"
+#include "create_project.h"
 
 #include <GLFW/glfw3.h>
 #include <unordered_map>
@@ -10,7 +11,6 @@
 #include <iostream>
 #include <string>
 #include <miniaudio/miniaudio.h>
-#include <miniz/miniz.h>
 
 using namespace std;
 

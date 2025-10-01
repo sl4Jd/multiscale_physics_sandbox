@@ -8,9 +8,11 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <string>
 #include <sstream>
-#include "includes/camera.h"
-#include "includes/model.h"
+#include "camera.h"
+#include "model.h"
 #include <imgui/imgui.h>
+
+#include "create_project.h"
 
 
 using namespace std;
