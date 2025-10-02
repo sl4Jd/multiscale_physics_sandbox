@@ -1,6 +1,8 @@
+# MULTI-SCALE PHYSICS SANDBOX
+
 hopefully this turns into something cool before i start uni
 
-# BUILDING FROM SOURCE
+## CLONE
 
 ```bash
 git clone https://github.com/sl4Jd/multiscale_physics_sandbox.git
@@ -8,26 +10,30 @@ git clone https://github.com/sl4Jd/multiscale_physics_sandbox.git
 ```bash
 cd multiscale_physics_sandbox
 ```
-## BUILD DEPS
+## BUILD FOR WINDOWS
 
-### BUILD FOR VISUAL STUDIO
-be sure to have VCPKG_ROOT as environmental variable or put full path in CMakePresets.json file 
+### WITH MSVC 
+must be in VS dev cmd
 ```bash
-cmake -B build -S .
+cmake -B build -S . -DCMAKE_TOOLCHAIN_FILE="path/to/vcpkg/scripts/buildsystems/vcpkg.cmake"
 ```
 ```bash
 cmake --build build
 ```
-### BUILD WITH MSVC AND VCPKG
-if you like vcpkg but use some text editor and dont want visual studio bullshit  
-i dont recommend using gcc compiler as vcpkg's x64-mingw triplets are quite unreliable  
-all commands must be in developer cmd for visual studio  
-be sure to have VCPKG_ROOT as environmental variable or put full path in CMakePresets.json file 
+### WITH GCC
+vcpkg triplets for gcc are much more unreliable so i recommend using conan here
 ```bash
-cmake --preset vcpkg
+conan install . --profile=default --output-folder=build --build=missing --settings build_type=Release
 ```
-## BUILD APP
 ```bash
-cmake --build build
+cd build  
 ```
+```bash
+cmake .. -G "MinGW Makefiles" -DCMAKE_TOOLCHAIN_FILE="conan_toolchain.cmake" -DCMAKE_BUILD_TYPE=Release
+```
+```bash
+cmake --build . --config Release 
+```
+## BUILD FOR LINUX
+
 you shoud now have multi-scale-sandbox.exe in build/bin directory

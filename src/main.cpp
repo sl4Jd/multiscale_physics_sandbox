@@ -142,7 +142,7 @@ int main()
     //load_audio();
     if (ma_engine_init(NULL, &engine) != MA_SUCCESS) {
         printf("Failed to init engine\n");
-        return -1;
+        return 1;
     }
     ma_sound_init_from_file(&engine, "assets/sound/click.wav", 0, NULL, NULL, &clickSound);
     ma_sound_init_from_file(&engine, "assets/sound/hover.wav", 0, NULL, NULL, &hoverSound);

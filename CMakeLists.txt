@@ -47,7 +47,7 @@ include_directories(
 # Link librariess
 target_link_libraries(${EXECUTABLE_NAME}
     glfw
-    assimp
+    assimp::assimp
     opengl32
 )
 

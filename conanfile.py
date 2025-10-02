@@ -1,7 +1,9 @@
 from conan import ConanFile
+from conan.tools.files import copy
 
 class Conan(ConanFile):
-    name = "Multiscale_sandbox"
+    settings = "os", "compiler", "build_type", "arch"
+    name = "multiscale-sandbox"
     version = "0.1.0"
     requires = (
         "assimp/5.4.3",
