@@ -35,5 +35,10 @@ cmake .. -G "MinGW Makefiles" -DCMAKE_TOOLCHAIN_FILE="conan_toolchain.cmake" -DC
 cmake --build . --config Release 
 ```
 ## BUILD FOR LINUX
-
-you shoud now have multi-scale-sandbox.exe in build/bin directory
+```bash
+cmake -B build -S . -DCMAKE_TOOLCHAIN_FILE=/path/to/vcpkg/scripts/buildsystems/vcpkg.cmake
+```
+```bash
+cmake --build build
+```
+you shoud now have multi-scale-sandbox in build/bin directory
