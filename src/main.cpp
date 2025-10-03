@@ -4,7 +4,6 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <string>
-#include <windows.h>
 #include "miniaudio/miniaudio.h"
 #include "json.hpp"
 #include <fstream>

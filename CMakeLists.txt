@@ -12,6 +12,7 @@ set(EXECUTABLE_NAME multi-scale-sandbox)
 # Add include directories
 find_package(assimp CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
+find_package(OpenGL REQUIRED)
 
 
 # Source files
@@ -48,7 +49,7 @@ include_directories(
 target_link_libraries(${EXECUTABLE_NAME}
     glfw
     assimp::assimp
-    opengl32
+    OpenGL::GL
 )
 
 # Windows- option (hide console)
