@@ -94,7 +94,12 @@ void CreateProject()
             }
             else {
                 name_exists = false;
-                CreateZipFile(projectName.c_str());
+                try{
+                    CreateProjectZipFile(projectName.c_str());
+                }
+                catch (const std::runtime_error& e) {
+                    cerr << "Error: " << e.what() << "\n";
+                }
                 glfwSetWindowShouldClose(main_window, true);
                 open_new_project = true;
             }

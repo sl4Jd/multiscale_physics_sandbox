@@ -164,7 +164,7 @@ int main()
     // Create window with graphics context
     windowWidth = screenWidth / 2;
     windowHeight = screenHeight / 2;
-    main_window = glfwCreateWindow(windowWidth, windowHeight, "engine", NULL, NULL);
+    main_window = glfwCreateWindow(windowWidth, windowHeight, "APP", NULL, NULL);
     if (main_window == NULL)
         return 1;
     int posX = (screenWidth - windowWidth) / 2;
@@ -182,7 +182,7 @@ int main()
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
     ImFontGlyphRangesBuilder builder;
-    builder.AddText("đčšćžĐČŠĆŽ");           // add the characters you need
+    builder.AddText("đčšćžĐČŠĆŽ");           // add the characters 
     builder.AddRanges(io.Fonts->GetGlyphRangesDefault()); // add default ASCII
 
     ImVector<ImWchar> glyph_ranges;
