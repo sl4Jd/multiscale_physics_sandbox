@@ -8,6 +8,7 @@
 #include <string>
 #include <stdexcept>
 #include "zip_utils.h"
+#include <filesystem>
 
 using namespace std;
 
@@ -53,26 +54,15 @@ void UnzipFile(const std::string& zipName) {
         }
 
         // Build full output path
-        char out_path[1024];
         string output_dir = "user_data/projects/" + zipName;
-        snprintf(out_path, sizeof(out_path), "%s/%s", output_dir.c_str(), file_stat.m_filename);
+        string out_path = output_dir + "/" + file_stat.m_filename;
 
         //make subdirs
-        for (char *p = out_path + strlen(output_dir.c_str()) + 1; *p; p++) {
-            if (*p == '/' || *p == '\\') {
-                *p = '\0';
-#ifdef _WIN32
-                _mkdir(out_path);
-#else
-                mkdir(out_path, 0755);
-#endif
-                *p = '/';
-            }
-        }
+        filesystem::create_directories(std::filesystem::path(out_path).parent_path());
         // Extract the file
-        if (!mz_zip_reader_extract_to_file(&zipArchive, i, out_path, 0)) {
+        if (!mz_zip_reader_extract_to_file(&zipArchive, i, out_path.c_str(), 0)) {
             mz_zip_reader_end(&zipArchive);
-            throw runtime_error("Failed to extract file" + string(file_stat.m_filename));
+            throw runtime_error("Failed to extract file " + string(file_stat.m_filename));
         }
     }
 

@@ -3,6 +3,7 @@
 #include "game_engine.h"
 #include "main.h"
 #include "open_project.h"
+#include "zip_utils.h"
 #include <GLFW/glfw3.h>
 #include <fstream>
 #include <filesystem>
@@ -248,6 +249,12 @@ void OpenProject()
             else {
                 no_selected = false;
                 glfwSetWindowShouldClose(main_window, true);
+                try {
+                    UnzipFile(labels[selectedIndex]);
+                }
+                catch (const runtime_error& e){
+                    cerr << "Error: " << e.what() << "\n";
+                }
                 open_project = true;
 
             }

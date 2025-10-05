@@ -97,7 +97,7 @@ void CreateProject()
                 try{
                     CreateProjectZipFile(projectName.c_str());
                 }
-                catch (const std::runtime_error& e) {
+                catch (const runtime_error& e) {
                     cerr << "Error: " << e.what() << "\n";
                 }
                 glfwSetWindowShouldClose(main_window, true);
