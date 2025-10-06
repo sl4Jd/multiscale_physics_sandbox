@@ -14,18 +14,8 @@ find_package(assimp CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(OpenGL REQUIRED)
 
-
 # Source files
-set(SOURCES
-    src/main.cpp
-    src/main_menu.cpp
-    src/open_project.cpp
-    src/create_project.cpp
-    src/settings.cpp
-    src/game_engine.cpp
-    src/zip_utils.cpp
-    src/save_project.cpp
-    vendored_extern_deps/imgui/image_implementation.cpp
+add_library(imgui STATIC
     vendored_extern_deps/imgui/imgui.cpp
     vendored_extern_deps/imgui/imgui_widgets.cpp
     vendored_extern_deps/imgui/imgui_tables.cpp
@@ -33,24 +23,41 @@ set(SOURCES
     vendored_extern_deps/imgui/imgui_impl_opengl3.cpp
     vendored_extern_deps/imgui/imgui_impl_glfw.cpp
     vendored_extern_deps/imgui/imgui_demo.cpp
-    vendored_extern_deps/glad/glad.c
-    vendored_extern_deps/miniaudio/miniaudio.c
-    vendored_extern_deps/miniz/miniz.c
+    vendored_extern_deps/imgui/image_implementation.cpp
+)
+target_include_directories(imgui PUBLIC vendored_extern_deps)
+target_link_libraries(imgui PRIVATE glfw)
+
+add_library(glad STATIC vendored_extern_deps/glad/glad.c)
+target_include_directories(glad PUBLIC vendored_extern_deps/glad)
+
+add_library(miniaudio STATIC vendored_extern_deps/miniaudio/miniaudio.c)
+target_include_directories(miniaudio PUBLIC vendored_extern_deps/miniaudio)
+
+add_library(miniz STATIC vendored_extern_deps/miniz/miniz.c)
+target_include_directories(miniz PUBLIC vendored_extern_deps/miniz)
+
+
+add_library(nlohmann_json INTERFACE)
+target_include_directories(nlohmann_json INTERFACE
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendored_extern_deps/nlohmann_json
 )
 
-# Add the executable
+add_library(glm INTERFACE)
+target_include_directories(glm INTERFACE
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendored_extern_deps/glm
+)
+
+add_subdirectory(src)
+
 add_executable(${EXECUTABLE_NAME} ${SOURCES})
 
-include_directories(
-    ${CMAKE_SOURCE_DIR}/vendored_extern_deps
-    ${CMAKE_SOURCE_DIR}/src/includes
-)
+# Link libraries
+target_link_libraries(${EXECUTABLE_NAME} PRIVATE imgui glad miniaudio miniz nlohmann_json glm glfw assimp::assimp OpenGL::GL)
 
-# Link librariess
-target_link_libraries(${EXECUTABLE_NAME}
-    glfw
-    assimp::assimp
-    OpenGL::GL
+# add include directories
+target_include_directories(${EXECUTABLE_NAME} PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/includes
 )
 
 # Windows- option (hide console)
