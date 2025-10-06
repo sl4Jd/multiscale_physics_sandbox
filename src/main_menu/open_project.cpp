@@ -1,4 +1,4 @@
-#include "imgui/imgui.h"
+#include <imgui.h>
 #include "appstate.h"
 #include "game_engine.h"
 #include "main.h"
@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
-#include "miniaudio/miniaudio.h"
+#include <miniaudio.h>
 
 using namespace std;
 

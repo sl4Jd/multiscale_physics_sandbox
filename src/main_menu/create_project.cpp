@@ -1,4 +1,4 @@
-#include "imgui/imgui.h"
+#include <imgui.h>
 #include "appstate.h"
 #include "game_engine.h"
 #include "main.h"
@@ -11,7 +11,7 @@
 #include <filesystem>
 #include <iostream>
 #include <string>
-#include "miniaudio/miniaudio.h"
+#include <miniaudio.h>
 
 using namespace std;
 
@@ -96,6 +96,7 @@ void CreateProject()
                 name_exists = false;
 
                 //Create directory and scene.json file
+                projectPath = "user_data/projects/working";
                 filesystem::create_directory(projectPath);
                 filesystem::path file_path = filesystem::path(projectPath) / "scene.json";
 

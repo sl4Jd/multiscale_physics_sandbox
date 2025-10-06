@@ -1,6 +1,6 @@
-#include "imgui/imgui.h"
-#include "miniaudio/miniaudio.h"
-#include "json.hpp"
+#include <imgui.h>
+#include <miniaudio.h>
+#include <json.hpp>
 #include <fstream>
 #include <iostream>
 #include <string>

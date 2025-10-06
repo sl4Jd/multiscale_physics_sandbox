@@ -2,18 +2,18 @@
 #include <fstream>
 #include <chrono>
 #include <filesystem>
-#include "glad/glad.h"
+#include <glad.h>
 #include <GLFW/glfw3.h>
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtc/type_ptr.hpp"
+#include <glm.hpp>
+#include <gtc/matrix_transform.hpp>
+#include <gtc/type_ptr.hpp>
 #include <string>
 #include <sstream>
+#include <imgui.h>
+#include <json.hpp>
+
 #include "camera.h"
 #include "model.h"
-#include "imgui/imgui.h"
-#include "json.hpp"
-
 #include "create_project.h"
 #include "save_project.h"
 

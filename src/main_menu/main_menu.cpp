@@ -1,5 +1,5 @@
-#include "imgui/imgui.h"
-#include "miniaudio/miniaudio.h"
+#include <imgui.h>
+#include <miniaudio.h>
 #include <unordered_map>
 #include <string>
 #include <iostream>

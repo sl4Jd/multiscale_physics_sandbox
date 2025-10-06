@@ -25,7 +25,7 @@ add_library(imgui STATIC
     vendored_extern_deps/imgui/imgui_demo.cpp
     vendored_extern_deps/imgui/image_implementation.cpp
 )
-target_include_directories(imgui PUBLIC vendored_extern_deps)
+target_include_directories(imgui PUBLIC vendored_extern_deps/imgui)
 target_link_libraries(imgui PRIVATE glfw)
 
 add_library(glad STATIC vendored_extern_deps/glad/glad.c)
@@ -40,31 +40,78 @@ target_include_directories(miniz PUBLIC vendored_extern_deps/miniz)
 
 add_library(nlohmann_json INTERFACE)
 target_include_directories(nlohmann_json INTERFACE
-    ${CMAKE_CURRENT_SOURCE_DIR}/vendored_extern_deps/nlohmann_json
+    vendored_extern_deps/json
 )
 
 add_library(glm INTERFACE)
 target_include_directories(glm INTERFACE
-    ${CMAKE_CURRENT_SOURCE_DIR}/vendored_extern_deps/glm
+    vendored_extern_deps/glm
 )
 
 add_subdirectory(src)
 
-add_executable(${EXECUTABLE_NAME} ${SOURCES})
+add_executable(${EXECUTABLE_NAME} src/main.cpp)
 
 # Link libraries
-target_link_libraries(${EXECUTABLE_NAME} PRIVATE imgui glad miniaudio miniz nlohmann_json glm glfw assimp::assimp OpenGL::GL)
+target_link_libraries(${EXECUTABLE_NAME} PRIVATE 
+    imgui 
+    glad 
+    miniaudio 
+    miniz 
+    nlohmann_json 
+    glfw 
+    main_menu
+    workspace
+    utils
+)
 
-# add include directories
+# add include directories for the executable
 target_include_directories(${EXECUTABLE_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/includes
 )
+
+# add include directories and libraries for main_menu
+target_include_directories(main_menu PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/includes
+)
+target_link_libraries(main_menu PRIVATE
+    imgui 
+    miniaudio 
+    nlohmann_json 
+    glfw 
+)
+
+# add include directories and libraries for workspace
+target_include_directories(workspace PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/includes
+)
+target_link_libraries(workspace PRIVATE
+    imgui 
+    miniaudio 
+    nlohmann_json 
+    glfw 
+    glad
+    glm
+    OpenGL::GL
+    assimp::assimp
+)
+
+# add include directories and libraries for utils
+target_include_directories(utils PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/includes
+)
+target_link_libraries(utils PRIVATE
+    miniz
+)
+
 
 # Windows- option (hide console)
 if(WIN32)
     target_link_options(${EXECUTABLE_NAME} PRIVATE -mwindows)
 endif()
 
+
+# transport assets and user_data folders to the bin directory
 add_custom_command(TARGET ${EXECUTABLE_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/assets
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/user_data $<TARGET_FILE_DIR:${EXECUTABLE_NAME}>/user_data

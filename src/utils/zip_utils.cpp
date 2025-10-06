@@ -1,4 +1,4 @@
-#include "miniz/miniz.h"
+#include <miniz.h>
 #include <string>
 #include <stdexcept>
 #include "zip_utils.h"
