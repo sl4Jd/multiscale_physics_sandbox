@@ -1,9 +1,3 @@
-#ifdef _WIN32
-#include <direct.h>
-#else
-#include <sys/stat.h>
-#include <sys/types.h>
-#endif
 #include "miniz/miniz.h"
 #include <string>
 #include <stdexcept>
@@ -23,7 +17,10 @@ void CreateProjectZipFile(const string& zipName) {
         throw runtime_error("Failed to initialize zip writer");
     }
 
-    mz_zip_writer_add_mem(&zipArchive, "scene.json", scene.c_str(), scene.size(), 0);
+    if (!mz_zip_writer_add_file(&zipArchive, "scene.json","user_data/projects/working/scene.json", nullptr, 0, 6)) {
+        mz_zip_writer_end(&zipArchive);
+        throw runtime_error("Failed to add scene.json to zip");
+    }
 
     if (!mz_zip_writer_finalize_archive(&zipArchive)) {
         mz_zip_writer_end(&zipArchive);
@@ -54,7 +51,7 @@ void UnzipFile(const std::string& zipName) {
         }
 
         // Build full output path
-        string output_dir = "user_data/projects/" + zipName;
+        string output_dir = "user_data/projects/working";
         string out_path = output_dir + "/" + file_stat.m_filename;
 
         //make subdirs

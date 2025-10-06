@@ -88,18 +88,26 @@ void CreateProject()
         else {
             no_name = false;
             string projectName = string(inputBuffer);
-            string projectPath = "user_data/projects/" + projectName + ".msps";
+            string projectPath = "user_data/projects/" + projectName;
             if(filesystem::exists(projectPath)) {
                 name_exists = true;
             }
             else {
                 name_exists = false;
-                try{
-                    CreateProjectZipFile(projectName.c_str());
+
+                //Create directory and scene.json file
+                filesystem::create_directory(projectPath);
+                filesystem::path file_path = filesystem::path(projectPath) / "scene.json";
+
+                // Open the file
+                ofstream ofs(file_path);
+                if (!ofs) {
+                    cerr << "Failed to create file: " << file_path << "\n";
                 }
-                catch (const runtime_error& e) {
-                    cerr << "Error: " << e.what() << "\n";
-                }
+
+                //Write in scene.json
+                ofs << "{\n  \"name\": \"" + projectName + "\"\n}";
+                
                 glfwSetWindowShouldClose(main_window, true);
                 open_new_project = true;
             }

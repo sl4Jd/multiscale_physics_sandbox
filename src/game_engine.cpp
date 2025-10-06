@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <chrono>
 #include <filesystem>
 #include "glad/glad.h"
@@ -10,19 +11,22 @@
 #include <sstream>
 #include "camera.h"
 #include "model.h"
-#include <imgui/imgui.h>
+#include "imgui/imgui.h"
+#include "json.hpp"
 
 #include "create_project.h"
+#include "save_project.h"
 
-
+using json = nlohmann::json;
 using namespace std;
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 // settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_WIDTH = 1400;
+const unsigned int SCR_HEIGHT = 900;
 
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -34,8 +38,12 @@ bool firstMouse = true;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-//GUI
+json project_settings;
 
+void get_settings(){
+    ifstream file("user_data/projects/working/scene.json");
+    file >> project_settings;
+}
 void StartNewProject()
 {
 
@@ -46,6 +54,7 @@ void StartNewProject()
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     ImGui::StyleColorsDark();
     //glfwInit(); already did
+    get_settings();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -524,8 +533,11 @@ void StartNewProject()
 
 void processInput(GLFWwindow* window)
 {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
+        //save and quit
+        SaveProject(project_settings["name"]);
         glfwSetWindowShouldClose(window, true);
+    }
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         camera.ProcessKeyboard(FORWARD, deltaTime);

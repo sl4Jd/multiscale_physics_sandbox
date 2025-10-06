@@ -24,6 +24,7 @@ set(SOURCES
     src/settings.cpp
     src/game_engine.cpp
     src/zip_utils.cpp
+    src/save_project.cpp
     vendored_extern_deps/imgui/image_implementation.cpp
     vendored_extern_deps/imgui/imgui.cpp
     vendored_extern_deps/imgui/imgui_widgets.cpp

@@ -248,13 +248,13 @@ void OpenProject()
             }
             else {
                 no_selected = false;
-                glfwSetWindowShouldClose(main_window, true);
                 try {
                     UnzipFile(labels[selectedIndex]);
                 }
                 catch (const runtime_error& e){
                     cerr << "Error: " << e.what() << "\n";
                 }
+                glfwSetWindowShouldClose(main_window, true);
                 open_project = true;
 
             }
