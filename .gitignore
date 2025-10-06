@@ -4,5 +4,3 @@ imgui.ini
 /build
 /vcpkg_installed
 /CMakeUserPresets.json
-desktop.ini
-download.ico
