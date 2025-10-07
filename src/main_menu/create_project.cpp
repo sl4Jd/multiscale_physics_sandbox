@@ -107,7 +107,15 @@ void CreateProject()
                 }
 
                 //Write in scene.json
-                ofs << "{\n  \"name\": \"" + projectName + "\"\n}";
+                ofs << "{\n";
+                ofs << "  \"name\": \"" << projectName << "\",\n";
+                ofs << "  \"objects\": [\n";
+                ofs << "    { \"name\": \"object1\", \"type\": \"model\", \"shape\": \"backpack\"},\n";
+                ofs << "    { \"name\": \"object2\", \"type\": \"primitive\", \"shape\": \"cube\"}\n";
+                ofs << "  ]\n";
+                ofs << "}\n";
+                
+                ofs.close();
                 
                 glfwSetWindowShouldClose(main_window, true);
                 open_new_project = true;

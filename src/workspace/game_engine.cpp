@@ -20,6 +20,13 @@
 using json = nlohmann::json;
 using namespace std;
 
+struct Object {
+    string name;
+    string type;
+    string shape;
+};
+vector<Object> objects;
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
@@ -43,6 +50,9 @@ json project_settings;
 void get_settings(){
     ifstream file("user_data/projects/working/scene.json");
     file >> project_settings;
+    for (auto& obj : project_settings["objects"]) {
+    objects.push_back({ obj["name"], obj["type"], obj["shape"] });
+    }
 }
 void StartNewProject()
 {
@@ -374,7 +384,12 @@ void StartNewProject()
     //textura ce biti fucked ako se ne flipuje
 
     stbi_set_flip_vertically_on_load(true);
-    Model backpack("assets/resources/objects/backpack/backpack.obj");
+    map<string, Model*> sceneObjects;
+    for (const auto& obj : objects) {
+        if (obj.type == "model") {
+            sceneObjects[obj.name] = new Model("assets/resources/objects/" + obj.shape + "/"+ obj.shape + ".obj");
+        }
+    }
     stbi_set_flip_vertically_on_load(false);
     unsigned int framebuffer;
     glGenFramebuffers(1, &framebuffer);
@@ -440,7 +455,9 @@ void StartNewProject()
         glm::mat4 model = glm::translate(model, glm::vec3(10.0f, 0.0f, 0.0f));
         model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
         Modelshader.setMat4("model", model);
-        backpack.Draw(Modelshader);
+        for (const auto& obj : sceneObjects) {
+            obj.second->Draw(Modelshader);
+        }
         stbi_set_flip_vertically_on_load(false);
         shader.use();
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
