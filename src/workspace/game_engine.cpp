@@ -25,6 +25,8 @@ struct Object {
     string name;
     string type;
     string shape;
+    float posx, posy, posz;
+    float scalex, scaley, scalez;
 };
 vector<Object> objects;
 
@@ -52,7 +54,7 @@ void get_settings(){
     ifstream file("user_data/projects/working/scene.json");
     file >> project_settings;
     for (auto& obj : project_settings["objects"]) {
-    objects.push_back({ obj["name"], obj["type"], obj["shape"] });
+    objects.push_back({ obj["name"], obj["type"], obj["shape"], obj["posx"].get<float>(), obj["posy"].get<float>(), obj["posz"].get<float>(), obj["scalex"].get<float>(), obj["scaley"].get<float>(), obj["scalez"].get<float>()});
     }
 }
 void StartNewProject()
@@ -394,7 +396,7 @@ void StartNewProject()
         }
         else if (obj.type == "primitive") {
             if (obj.shape == "cube") {
-                cubes[obj.name] = Cube();
+                cubes[obj.name] = Cube(obj.posx, obj.posy, obj.posz, obj.scalex, obj.scaley, obj.scalez);
             }
         }
     }
@@ -470,19 +472,16 @@ void StartNewProject()
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
         glStencilMask(0xFF);
         // cubes
-         for (auto& cube : cubes) {
-            glBindVertexArray(cube.second.VAO);
-        }
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureID);
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
-        shader.setMat4("model", model);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
-        shader.setMat4("model", model);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+         for (auto& cube : cubes) {
+            glBindVertexArray(cube.second.VAO);
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, glm::vec3(cube.second.posx, cube.second.posy, cube.second.posz));
+            model = glm::scale(model, glm::vec3(cube.second.scalex, cube.second.scaley, cube.second.scalez));
+            shader.setMat4("model", model);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
         glStencilMask(0x00);
         shader.use();
         glBindVertexArray(transparentVAO);

@@ -4,7 +4,6 @@
 set(WORKSPACE_SOURCES
     game_engine.cpp
     save_project.cpp
-    primitives.cpp
 )
 
 # make library

@@ -110,8 +110,9 @@ void CreateProject()
                 ofs << "{\n";
                 ofs << "  \"name\": \"" << projectName << "\",\n";
                 ofs << "  \"objects\": [\n";
-                ofs << "    { \"name\": \"object1\", \"type\": \"model\", \"shape\": \"backpack\"},\n";
-                ofs << "    { \"name\": \"object2\", \"type\": \"primitive\", \"shape\": \"cube\"}\n";
+                ofs << "    { \"name\": \"object1\", \"type\": \"model\", \"shape\": \"backpack\", \"posx\": 10.0, \"posy\": 0.0, \"posz\": 0.0,  \"scalex\": 0.33, \"scaley\": 0.33, \"scalez\": 0.33},\n";
+                ofs << "    { \"name\": \"object2\", \"type\": \"primitive\", \"shape\": \"cube\",  \"posx\": -1.0, \"posy\": 0.0, \"posz\": -1.0,  \"scalex\": 1.0, \"scaley\": 1.0, \"scalez\": 1.0},\n";
+                ofs << "    { \"name\": \"object3\", \"type\": \"primitive\", \"shape\": \"cube\",  \"posx\": 2.0, \"posy\": 0.0, \"posz\": 0.0,  \"scalex\": 1.0, \"scaley\": 1.0, \"scalez\": 1.0}\n";
                 ofs << "  ]\n";
                 ofs << "}\n";
                 
