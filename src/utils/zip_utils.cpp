@@ -17,7 +17,7 @@ void CreateProjectZipFile(const string& zipName) {
         throw runtime_error("Failed to initialize zip writer");
     }
 
-    if (!mz_zip_writer_add_file(&zipArchive, "scene.json","user_data/projects/working/scene.json", nullptr, 0, 6)) {
+    if (!mz_zip_writer_add_file(&zipArchive, "scene.json","user_data/projects/working/scene.json", nullptr, 0, 0)) {
         mz_zip_writer_end(&zipArchive);
         throw runtime_error("Failed to add scene.json to zip");
     }

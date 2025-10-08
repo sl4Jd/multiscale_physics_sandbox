@@ -16,6 +16,7 @@
 #include "model.h"
 #include "create_project.h"
 #include "save_project.h"
+#include "primitives.h"
 
 using json = nlohmann::json;
 using namespace std;
@@ -381,16 +382,22 @@ void StartNewProject()
         GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R,
         GL_CLAMP_TO_EDGE);
-    //textura ce biti fucked ako se ne flipuje
+    //textura ce biti fucked ako se ne flipuje za modele
 
-    stbi_set_flip_vertically_on_load(true);
-    map<string, Model*> sceneObjects;
+    map<string, Model*> sceneModels;
+    unordered_map<string, Cube> cubes;
     for (const auto& obj : objects) {
         if (obj.type == "model") {
-            sceneObjects[obj.name] = new Model("assets/resources/objects/" + obj.shape + "/"+ obj.shape + ".obj");
+            stbi_set_flip_vertically_on_load(true);
+            sceneModels[obj.name] = new Model("assets/resources/objects/" + obj.shape + "/"+ obj.shape + ".obj");
+            stbi_set_flip_vertically_on_load(false);
+        }
+        else if (obj.type == "primitive") {
+            if (obj.shape == "cube") {
+                cubes[obj.name] = Cube();
+            }
         }
     }
-    stbi_set_flip_vertically_on_load(false);
     unsigned int framebuffer;
     glGenFramebuffers(1, &framebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
@@ -455,7 +462,7 @@ void StartNewProject()
         glm::mat4 model = glm::translate(model, glm::vec3(10.0f, 0.0f, 0.0f));
         model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
         Modelshader.setMat4("model", model);
-        for (const auto& obj : sceneObjects) {
+        for (const auto& obj : sceneModels) {
             obj.second->Draw(Modelshader);
         }
         stbi_set_flip_vertically_on_load(false);
@@ -463,7 +470,9 @@ void StartNewProject()
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
         glStencilMask(0xFF);
         // cubes
-        glBindVertexArray(cubeVAO);
+         for (auto& cube : cubes) {
+            glBindVertexArray(cube.second.VAO);
+        }
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureID);
         model = glm::mat4(1.0f);
@@ -504,9 +513,11 @@ void StartNewProject()
         projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         border.setMat4("view", view);
         border.setMat4("projection", projection);
+        // cubes border
         float scale = 1.1f;
-        // cubes
-        glBindVertexArray(cubeVAO);
+        for (auto& cube : cubes) {
+            glBindVertexArray(cube.second.VAO);
+        }
         glBindTexture(GL_TEXTURE_2D, textureID);
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
