@@ -50,6 +50,11 @@ float lastFrame = 0.0f;
 
 json project_settings;
 
+extern unsigned int VAO_cube, VBO_cube;
+extern unsigned int VAO_plane, VBO_plane;
+extern unsigned int VAO_skybox, VBO_skybox;
+extern unsigned int VAO_transparent, VBO_transparent;
+
 void get_settings(){
     ifstream file("user_data/projects/working/scene.json");
     file >> project_settings;
@@ -105,199 +110,25 @@ void StartNewProject()
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
     // build and compile shaders
-    // -------------------------
     Shader shader("assets/shaders/vertexshad.vs", "assets/shaders/fragmentshad.fs");
     Shader screenshad("assets/shaders/screenvertexshad.vs", "assets/shaders/screenfragmentshad.fs");
     Shader border("assets/shaders/vertexshad.vs", "assets/shaders/border.fs");
     Shader boxShader("assets/shaders/boxvertexshader.vs", "assets/shaders/boxfragmentshader.fs");
     Shader Modelshader("assets/shaders/modelshader.vs", "assets/shaders/modelshader.fs");
-    float cubeVertices[] = {
-        // positions          // texture Coords
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, // bottom-left
-0.5f, 0.5f, -0.5f, 1.0f, 1.0f, // top-right
-0.5f, -0.5f, -0.5f, 1.0f, 0.0f, // bottom-right
-0.5f, 0.5f, -0.5f, 1.0f, 1.0f, // top-right
--0.5f, -0.5f, -0.5f, 0.0f, 0.0f, // bottom-left
--0.5f, 0.5f, -0.5f, 0.0f, 1.0f, // top-left
-// front face
--0.5f, -0.5f, 0.5f, 0.0f, 0.0f, // bottom-left
-0.5f, -0.5f, 0.5f, 1.0f, 0.0f, // bottom-right
-0.5f, 0.5f, 0.5f, 1.0f, 1.0f, // top-right
-0.5f, 0.5f, 0.5f, 1.0f, 1.0f, // top-right
--0.5f, 0.5f, 0.5f, 0.0f, 1.0f, // top-left
--0.5f, -0.5f, 0.5f, 0.0f, 0.0f, // bottom-left
-// left face
--0.5f, 0.5f, 0.5f, 1.0f, 0.0f, // top-right
--0.5f, 0.5f, -0.5f, 1.0f, 1.0f, // top-left
--0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // bottom-left
--0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // bottom-left
--0.5f, -0.5f, 0.5f, 0.0f, 0.0f, // bottom-right
--0.5f, 0.5f, 0.5f, 1.0f, 0.0f, // top-right
-// right face
-0.5f, 0.5f, 0.5f, 1.0f, 0.0f, // top-left
-0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // bottom-right
-0.5f, 0.5f, -0.5f, 1.0f, 1.0f, // top-right
-0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // bottom-right
-0.5f, 0.5f, 0.5f, 1.0f, 0.0f, // top-left
-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, // bottom-left
-// bottom face
--0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // top-right
-0.5f, -0.5f, -0.5f, 1.0f, 1.0f, // top-left
-0.5f, -0.5f, 0.5f, 1.0f, 0.0f, // bottom-left
-0.5f, -0.5f, 0.5f, 1.0f, 0.0f, // bottom-left
--0.5f, -0.5f, 0.5f, 0.0f, 0.0f, // bottom-right
--0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // top-right
-// top face
--0.5f, 0.5f, -0.5f, 0.0f, 1.0f, // top-left
-0.5f, 0.5f, 0.5f, 1.0f, 0.0f, // bottom-right
-0.5f, 0.5f, -0.5f, 1.0f, 1.0f, // top-right
-0.5f, 0.5f, 0.5f, 1.0f, 0.0f, // bottom-right
--0.5f, 0.5f, -0.5f, 0.0f, 1.0f, // top-left
--0.5f, 0.5f, 0.5f, 0.0f, 0.0f // bottom-left
-    };
-    float planeVertices[] = {
-        // positions          // texture Coords (note we set these higher than 1 (together with GL_REPEAT as texture wrapping mode). this will cause the floor texture to repeat)
-         5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
-        -5.0f, -0.5f,  5.0f,  0.0f, 0.0f,
-        -5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
 
-         5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
-        -5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
-         5.0f, -0.5f, -5.0f,  2.0f, 2.0f
-    };
-    float transparentVertices[] = {
-        // positions         // texture Coords
-        0.0f,  0.5f,  0.0f,  0.0f,  1.0f,
-        0.0f, -0.5f,  0.0f,  0.0f,  0.0f,
-        1.0f, -0.5f,  0.0f,  1.0f,  0.0f,
-
-        0.0f,  0.5f,  0.0f,  0.0f,  1.0f,
-        1.0f, -0.5f,  0.0f,  1.0f,  0.0f,
-        1.0f,  0.5f,  0.0f,  1.0f,  1.0f
-    };
-    float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
-        // positions   // texCoords
-        -0.3f,  1.0f,  0.0f, 1.0f,
-        -0.3f, 0.7f,  0.0f, 0.0f,
-         0.3f, 0.7f,  1.0f, 0.0f,
-
-        -0.3f,  1.0f,  0.0f, 1.0f,
-         0.3f, 0.7f,  1.0f, 0.0f,
-         0.3f,  1.0f,  1.0f, 1.0f
-    };
-    float skyboxVertices[] = {
-        // positions          
-        -1.0f,  1.0f, -1.0f,
-        -1.0f, -1.0f, -1.0f,
-         1.0f, -1.0f, -1.0f,
-         1.0f, -1.0f, -1.0f,
-         1.0f,  1.0f, -1.0f,
-        -1.0f,  1.0f, -1.0f,
-
-        -1.0f, -1.0f,  1.0f,
-        -1.0f, -1.0f, -1.0f,
-        -1.0f,  1.0f, -1.0f,
-        -1.0f,  1.0f, -1.0f,
-        -1.0f,  1.0f,  1.0f,
-        -1.0f, -1.0f,  1.0f,
-
-         1.0f, -1.0f, -1.0f,
-         1.0f, -1.0f,  1.0f,
-         1.0f,  1.0f,  1.0f,
-         1.0f,  1.0f,  1.0f,
-         1.0f,  1.0f, -1.0f,
-         1.0f, -1.0f, -1.0f,
-
-        -1.0f, -1.0f,  1.0f,
-        -1.0f,  1.0f,  1.0f,
-         1.0f,  1.0f,  1.0f,
-         1.0f,  1.0f,  1.0f,
-         1.0f, -1.0f,  1.0f,
-        -1.0f, -1.0f,  1.0f,
-
-        -1.0f,  1.0f, -1.0f,
-         1.0f,  1.0f, -1.0f,
-         1.0f,  1.0f,  1.0f,
-         1.0f,  1.0f,  1.0f,
-        -1.0f,  1.0f,  1.0f,
-        -1.0f,  1.0f, -1.0f,
-
-        -1.0f, -1.0f, -1.0f,
-        -1.0f, -1.0f,  1.0f,
-         1.0f, -1.0f, -1.0f,
-         1.0f, -1.0f, -1.0f,
-        -1.0f, -1.0f,  1.0f,
-         1.0f, -1.0f,  1.0f
-    };
+    // windows locaions
     vector<glm::vec3> windows;
     windows.push_back(glm::vec3(-1.5f, 0.0f, -0.48f));
     windows.push_back(glm::vec3(1.5f, 0.0f, 0.51f));
     windows.push_back(glm::vec3(0.0f, 0.0f, 0.7f));
     windows.push_back(glm::vec3(-0.3f, 0.0f, -2.3f));
     windows.push_back(glm::vec3(0.5f, 0.0f, -0.6f));
-    //unsigned int fbo;
-    //glGenFramebuffers(1, &fbo);
-    //glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-    //unsigned int textureColorbuffer;
-    //glGenTextures(1, &textureColorbuffer);
-    //glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
-    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
-    unsigned int cubeVAO, cubeVBO;
-    glGenVertexArrays(1, &cubeVAO);
-    glGenBuffers(1, &cubeVBO);
-    glBindVertexArray(cubeVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    glBindVertexArray(0);
-    // plane VAO
-    unsigned int planeVAO, planeVBO;
-    glGenVertexArrays(1, &planeVAO);
-    glGenBuffers(1, &planeVBO);
-    glBindVertexArray(planeVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices), &planeVertices, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    glBindVertexArray(0);
-    unsigned int transparentVAO, transparentVBO;
-    glGenVertexArrays(1, &transparentVAO);
-    glGenBuffers(1, &transparentVBO);
-    glBindVertexArray(transparentVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, transparentVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(transparentVertices), transparentVertices, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    unsigned int quadVAO, quadVBO;
-    glGenVertexArrays(1, &quadVAO);
-    glGenBuffers(1, &quadVBO);
-    glBindVertexArray(quadVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-    //skybox
-    unsigned int skyboxVAO, skyboxVBO;
-    glGenVertexArrays(1, &skyboxVAO);
-    glGenBuffers(1, &skyboxVBO);
-    glBindVertexArray(skyboxVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+    // configure cube VAO/VBO, plane VAO/VBO, transparent VAO/VBO, skybox VAO/VBO
+    init_primitives_VAO_VBO();
+
     unsigned int textureID;
     glGenTextures(1, &textureID);
     int width, height, nrComponents;
@@ -450,7 +281,7 @@ void StartNewProject()
         shader.setMat4("projection", projection);
         shader.setMat4("view", view);
         glStencilMask(0x00);
-        glBindVertexArray(planeVAO);
+        glBindVertexArray(VAO_plane);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureID2);
         glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -475,7 +306,7 @@ void StartNewProject()
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureID);
          for (auto& cube : cubes) {
-            glBindVertexArray(cube.second.VAO);
+            glBindVertexArray(VAO_cube);
             model = glm::mat4(1.0f);
             model = glm::translate(model, glm::vec3(cube.second.posx, cube.second.posy, cube.second.posz));
             model = glm::scale(model, glm::vec3(cube.second.scalex, cube.second.scaley, cube.second.scalez));
@@ -484,7 +315,7 @@ void StartNewProject()
         }
         glStencilMask(0x00);
         shader.use();
-        glBindVertexArray(transparentVAO);
+        glBindVertexArray(VAO_transparent);
         glBindTexture(GL_TEXTURE_2D, textureID3);
         std::map<float, glm::vec3> sorted;
         for (unsigned int i = 0; i < windows.size(); i++)
@@ -515,7 +346,7 @@ void StartNewProject()
         // cubes border
         float scale = 1.1f;
         for (auto& cube : cubes) {
-            glBindVertexArray(cube.second.VAO);
+            glBindVertexArray(VAO_cube);
         }
         glBindTexture(GL_TEXTURE_2D, textureID);
         model = glm::mat4(1.0f);
@@ -536,18 +367,14 @@ void StartNewProject()
          projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
          boxShader.setMat4("view", view);
          boxShader.setMat4("projection", projection);
-         glBindVertexArray(skyboxVAO);
+         glBindVertexArray(VAO_skybox);
          glActiveTexture(GL_TEXTURE0);
          glBindTexture(GL_TEXTURE_CUBE_MAP, boxtex);
          glDrawArrays(GL_TRIANGLES, 0, 36);
          glDepthFunc(GL_LESS);
 
         glDisable(GL_DEPTH_TEST);
-        
-        //screenshad.use();
-        //glBindVertexArray(quadVAO);
-        //glBindTexture(GL_TEXTURE_2D, texColorBuffer);	// use the color attachment texture as the texture of the quad plane
-        //glDrawArrays(GL_TRIANGLES, 0, 6);
+    
         
         glfwSwapBuffers(window);
         glfwPollEvents();
