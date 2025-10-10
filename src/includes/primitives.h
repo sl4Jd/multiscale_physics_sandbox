@@ -129,9 +129,10 @@ float cubeVertices[] = {
 struct Cube {
     float posx, posy, posz;
     float scalex, scaley, scalez;
-    Cube() = default;
-    Cube(float posx, float posy, float posz, float scalex, float scaley, float scalez) : posx(posx), posy(posy), posz(posz), scalex(scalex), scaley(scaley), scalez(scalez) {
-    }
+};
+struct Plane {
+    float posx, posy, posz;
+    float scalex, scaley, scalez;
 };
 
 void init_primitives_VAO_VBO() {

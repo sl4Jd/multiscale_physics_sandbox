@@ -219,6 +219,7 @@ void StartNewProject()
 
     map<string, Model*> sceneModels;
     unordered_map<string, Cube> cubes;
+    unordered_map<string, Plane> planes;
     for (const auto& obj : objects) {
         if (obj.type == "model") {
             stbi_set_flip_vertically_on_load(true);
@@ -227,7 +228,10 @@ void StartNewProject()
         }
         else if (obj.type == "primitive") {
             if (obj.shape == "cube") {
-                cubes[obj.name] = Cube(obj.posx, obj.posy, obj.posz, obj.scalex, obj.scaley, obj.scalez);
+                cubes[obj.name] = Cube{obj.posx, obj.posy, obj.posz, obj.scalex, obj.scaley, obj.scalez};
+            }
+            else if (obj.shape == "plane") {
+                planes[obj.name] = Plane{obj.posx, obj.posy, obj.posz, obj.scalex, obj.scaley, obj.scalez};
             }
         }
     }
@@ -284,7 +288,13 @@ void StartNewProject()
         glBindVertexArray(VAO_plane);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureID2);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        for (const auto& plane : planes) {
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, glm::vec3(plane.second.posx, plane.second.posy, plane.second.posz));
+            model = glm::scale(model, glm::vec3(plane.second.scalex, plane.second.scaley, plane.second.scalez));
+            shader.setMat4("model", model);
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+        }
         glBindVertexArray(0);
         stbi_set_flip_vertically_on_load(true);
         Modelshader.use();
@@ -362,16 +372,16 @@ void StartNewProject()
         glDepthFunc(GL_LESS);
         glStencilMask(0xFF);
         glDepthFunc(GL_LEQUAL);
-         boxShader.use();
-         view = glm::mat4(glm::mat3(camera.GetViewMatrix()));
-         projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-         boxShader.setMat4("view", view);
-         boxShader.setMat4("projection", projection);
-         glBindVertexArray(VAO_skybox);
-         glActiveTexture(GL_TEXTURE0);
-         glBindTexture(GL_TEXTURE_CUBE_MAP, boxtex);
-         glDrawArrays(GL_TRIANGLES, 0, 36);
-         glDepthFunc(GL_LESS);
+        boxShader.use();
+        view = glm::mat4(glm::mat3(camera.GetViewMatrix()));
+        projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        boxShader.setMat4("view", view);
+        boxShader.setMat4("projection", projection);
+        glBindVertexArray(VAO_skybox);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, boxtex);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glDepthFunc(GL_LESS);
 
         glDisable(GL_DEPTH_TEST);
     
