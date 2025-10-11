@@ -114,7 +114,8 @@ void CreateProject()
                 ofs << "    { \"name\": \"object2\", \"type\": \"primitive\", \"shape\": \"cube\",  \"posx\": -1.0, \"posy\": 0.0, \"posz\": -1.0,  \"scalex\": 1.0, \"scaley\": 1.0, \"scalez\": 1.0},\n";
                 ofs << "    { \"name\": \"object3\", \"type\": \"primitive\", \"shape\": \"cube\",  \"posx\": 2.0, \"posy\": 0.0, \"posz\": 0.0,  \"scalex\": 1.0, \"scaley\": 1.0, \"scalez\": 1.0},\n";
                 ofs << "    { \"name\": \"object4\", \"type\": \"primitive\", \"shape\": \"plane\",  \"posx\": 0.0, \"posy\": 0.0, \"posz\": 0.0,  \"scalex\": 1.0, \"scaley\": 1.0, \"scalez\": 1.0}\n";
-                ofs << "  ]\n";
+                ofs << "  ],\n";
+                ofs << "  \"skybox\": \"skybox\"\n";
                 ofs << "}\n";
                 
                 ofs.close();

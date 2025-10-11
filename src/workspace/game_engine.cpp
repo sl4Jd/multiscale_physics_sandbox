@@ -59,7 +59,7 @@ void get_settings(){
     ifstream file("user_data/projects/working/scene.json");
     file >> project_settings;
     for (auto& obj : project_settings["objects"]) {
-    objects.push_back({ obj["name"], obj["type"], obj["shape"], obj["posx"].get<float>(), obj["posy"].get<float>(), obj["posz"].get<float>(), obj["scalex"].get<float>(), obj["scaley"].get<float>(), obj["scalez"].get<float>()});
+        objects.push_back({ obj["name"], obj["type"], obj["shape"], obj["posx"].get<float>(), obj["posy"].get<float>(), obj["posz"].get<float>(), obj["scalex"].get<float>(), obj["scaley"].get<float>(), obj["scalez"].get<float>()});
     }
 }
 void StartNewProject()
@@ -178,14 +178,15 @@ void StartNewProject()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     stbi_image_free(data);
-    vector<std::string> faces
+    string path = "assets/resources/textures/"+ project_settings["skybox"].get<string>() + "/";
+    vector<string> faces
     {
-        "assets/resources/textures/skybox/right.jpg",
-            "assets/resources/textures/skybox/left.jpg",
-            "assets/resources/textures/skybox/top.jpg",
-            "assets/resources/textures/skybox/bottom.jpg",
-            "assets/resources/textures/skybox/front.jpg",
-            "assets/resources/textures/skybox/back.jpg"
+        path+"right.jpg",
+        path+"left.jpg",
+        path+"top.jpg",
+        path+"bottom.jpg",
+        path+"front.jpg",
+        path+"back.jpg"
     };
     unsigned int boxtex;
     glGenTextures(1, &boxtex);
