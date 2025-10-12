@@ -1,6 +1,10 @@
 #pragma once
 
 #include <glad.h>
+#include <string>
+
+using namespace std;
+
 
 unsigned int VAO_plane, VBO_plane;
 unsigned int VAO_cube, VBO_cube;
@@ -72,16 +76,6 @@ float cubeVertices[] = {
         1.0f, -0.5f,  0.0f,  1.0f,  0.0f,
         1.0f,  0.5f,  0.0f,  1.0f,  1.0f
     };
-    float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
-        // positions   // texCoords
-        -0.3f,  1.0f,  0.0f, 1.0f,
-        -0.3f, 0.7f,  0.0f, 0.0f,
-         0.3f, 0.7f,  1.0f, 0.0f,
-
-        -0.3f,  1.0f,  0.0f, 1.0f,
-         0.3f, 0.7f,  1.0f, 0.0f,
-         0.3f,  1.0f,  1.0f, 1.0f
-    };
     float skyboxVertices[] = {
         // positions          
         -1.0f,  1.0f, -1.0f,
@@ -129,10 +123,12 @@ float cubeVertices[] = {
 struct Cube {
     float posx, posy, posz;
     float scalex, scaley, scalez;
+    string texture;
 };
 struct Plane {
     float posx, posy, posz;
     float scalex, scaley, scalez;
+    string texture;
 };
 
 void init_primitives_VAO_VBO() {

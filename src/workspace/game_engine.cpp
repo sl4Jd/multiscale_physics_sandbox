@@ -27,8 +27,10 @@ struct Object {
     string shape;
     float posx, posy, posz;
     float scalex, scaley, scalez;
+    string texture;
 };
 vector<Object> objects;
+
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -59,7 +61,17 @@ void get_settings(){
     ifstream file("user_data/projects/working/scene.json");
     file >> project_settings;
     for (auto& obj : project_settings["objects"]) {
-        objects.push_back({ obj["name"], obj["type"], obj["shape"], obj["posx"].get<float>(), obj["posy"].get<float>(), obj["posz"].get<float>(), obj["scalex"].get<float>(), obj["scaley"].get<float>(), obj["scalez"].get<float>()});
+        objects.push_back({ obj["name"], 
+                            obj["type"], 
+                            obj["shape"], 
+                            obj["posx"].get<float>(), 
+                            obj["posy"].get<float>(), 
+                            obj["posz"].get<float>(), 
+                            obj["scalex"].get<float>(), 
+                            obj["scaley"].get<float>(), 
+                            obj["scalez"].get<float>(),
+                            obj["texture"].get<string>()
+        });
     }
 }
 void StartNewProject()
@@ -129,55 +141,62 @@ void StartNewProject()
     // configure cube VAO/VBO, plane VAO/VBO, transparent VAO/VBO, skybox VAO/VBO
     init_primitives_VAO_VBO();
 
-    unsigned int textureID;
-    glGenTextures(1, &textureID);
+    unordered_map<string, unsigned int*> texs;
+
+    // load marble texture
+    unsigned int marble_tex;
+    glGenTextures(1, &marble_tex);
     int width, height, nrComponents;
-    cout << filesystem::current_path().string() << endl;
     unsigned char* data = stbi_load("assets/resources/textures/marble.jpg", &width, &height, &nrComponents, 0);
-    glBindTexture(GL_TEXTURE_2D, textureID);
+    glBindTexture(GL_TEXTURE_2D, marble_tex);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
     stbi_image_free(data);
-    unsigned int textureID2;
-    glGenTextures(1, &textureID2);
-    glBindTexture(GL_TEXTURE_2D, textureID2);
-    cout << filesystem::current_path().string() << endl;
+    texs["marble_tex"] = &marble_tex;
+
+    // load metal texture
+    unsigned int metal_tex;
+    glGenTextures(1, &metal_tex);
+    glBindTexture(GL_TEXTURE_2D, metal_tex);
     data = stbi_load("assets/resources/textures/metal.png", &width, &height, &nrComponents, 0);
     if (data) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else {
-        std::cout << "Failed to load texture" << std::endl;
+        cerr << "Failed to load texture" << endl;
     }
-
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     stbi_image_free(data);
-    unsigned int textureID3;
-    glGenTextures(1, &textureID3);
-    glBindTexture(GL_TEXTURE_2D, textureID3);
+    texs["metal_tex"] = &metal_tex;
+
+    // load window texture
+    unsigned int pink_window_tex;
+    glGenTextures(1, &pink_window_tex);
+    glBindTexture(GL_TEXTURE_2D, pink_window_tex);
     data = stbi_load("assets/resources/textures/pink_window.png", &width, &height, &nrComponents, 0);
     if (data) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else {
-        std::cout << "Failed to load texture" << std::endl;
+        cerr << "Failed to load texture" << endl;
     }
-
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     stbi_image_free(data);
+    texs["pink_window_tex"] = &pink_window_tex;
+
+    // load skybox textures
     string path = "assets/resources/textures/"+ project_settings["skybox"].get<string>() + "/";
     vector<string> faces
     {
@@ -229,10 +248,10 @@ void StartNewProject()
         }
         else if (obj.type == "primitive") {
             if (obj.shape == "cube") {
-                cubes[obj.name] = Cube{obj.posx, obj.posy, obj.posz, obj.scalex, obj.scaley, obj.scalez};
+                cubes[obj.name] = Cube{obj.posx, obj.posy, obj.posz, obj.scalex, obj.scaley, obj.scalez, obj.texture};
             }
             else if (obj.shape == "plane") {
-                planes[obj.name] = Plane{obj.posx, obj.posy, obj.posz, obj.scalex, obj.scaley, obj.scalez};
+                planes[obj.name] = Plane{obj.posx, obj.posy, obj.posz, obj.scalex, obj.scaley, obj.scalez, obj.texture};
             }
         }
     }
@@ -257,12 +276,12 @@ void StartNewProject()
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
         GL_RENDERBUFFER, rbo);
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-        cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << endl;
+        cerr << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << endl;
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     shader.use();
     shader.setInt("texture1", 0);
     boxShader.setInt("skybox", 0);
-
+    cout << "we are in" << endl;
     while (!glfwWindowShouldClose(window))
     {
         float currentFrame = static_cast<float>(glfwGetTime());
@@ -286,15 +305,17 @@ void StartNewProject()
         shader.setMat4("projection", projection);
         shader.setMat4("view", view);
         glStencilMask(0x00);
-        glBindVertexArray(VAO_plane);
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, textureID2);
+        glBindVertexArray(VAO_plane);
         for (const auto& plane : planes) {
+            cout << *texs["metal_tex"] << endl;
+            glBindTexture(GL_TEXTURE_2D, *texs[plane.second.texture]);
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, glm::vec3(plane.second.posx, plane.second.posy, plane.second.posz));
             model = glm::scale(model, glm::vec3(plane.second.scalex, plane.second.scaley, plane.second.scalez));
             shader.setMat4("model", model);
             glDrawArrays(GL_TRIANGLES, 0, 6);
+            cout << " plane done" << endl;
         }
         glBindVertexArray(0);
         stbi_set_flip_vertically_on_load(true);
@@ -313,21 +334,24 @@ void StartNewProject()
         shader.use();
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
         glStencilMask(0xFF);
+
         // cubes
+        cout << "cube";
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, textureID);
-         for (auto& cube : cubes) {
-            glBindVertexArray(VAO_cube);
+        glBindVertexArray(VAO_cube);
+        for (auto& cube : cubes) {
+            glBindTexture(GL_TEXTURE_2D, *texs[cube.second.texture]);
             model = glm::mat4(1.0f);
             model = glm::translate(model, glm::vec3(cube.second.posx, cube.second.posy, cube.second.posz));
             model = glm::scale(model, glm::vec3(cube.second.scalex, cube.second.scaley, cube.second.scalez));
             shader.setMat4("model", model);
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
+
         glStencilMask(0x00);
         shader.use();
         glBindVertexArray(VAO_transparent);
-        glBindTexture(GL_TEXTURE_2D, textureID3);
+        glBindTexture(GL_TEXTURE_2D, *texs["pink_window_tex"]);
         std::map<float, glm::vec3> sorted;
         for (unsigned int i = 0; i < windows.size(); i++)
         {
@@ -359,7 +383,7 @@ void StartNewProject()
         for (auto& cube : cubes) {
             glBindVertexArray(VAO_cube);
         }
-        glBindTexture(GL_TEXTURE_2D, textureID);
+        glBindTexture(GL_TEXTURE_2D, marble_tex);
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
         model = glm::scale(model, glm::vec3(scale, scale, scale));
