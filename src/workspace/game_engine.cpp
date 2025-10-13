@@ -10,6 +10,8 @@
 #include <string>
 #include <sstream>
 #include <imgui.h>
+#include <imgui_impl_opengl3.h>
+#include <imgui_impl_glfw.h>
 #include <json.hpp>
 
 #include "camera.h"
@@ -91,7 +93,7 @@ void StartNewProject()
     GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "project", NULL, NULL);
     if (window == NULL)
     {
-        std::cout << "Failed to create GLFW window" << std::endl;
+        cerr << "Failed to create GLFW window" << endl;
         glfwTerminate();
         return;
     }
@@ -110,18 +112,12 @@ void StartNewProject()
     // ---------------------------------------
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
-        std::cout << "Failed to initialize GLAD" << std::endl;
+        cerr << "Failed to initialize GLAD" << endl;
         return;
     }
 
     // tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
     //stbi_set_flip_vertically_on_load(true);
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_STENCIL_TEST);
-    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
     // build and compile shaders
     Shader shader("assets/shaders/vertexshad.vs", "assets/shaders/fragmentshad.fs");
@@ -222,8 +218,8 @@ void StartNewProject()
         }
         else
         {
-            std::cout << "Cubemap failed to load at path: " << faces[i]
-                << std::endl;
+            cerr << "Cubemap failed to load at path: " << faces[i]
+                << endl;
             stbi_image_free(data);
         }
     }
@@ -281,9 +277,15 @@ void StartNewProject()
     shader.use();
     shader.setInt("texture1", 0);
     boxShader.setInt("skybox", 0);
-    cout << "we are in" << endl;
     while (!glfwWindowShouldClose(window))
     {
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_STENCIL_TEST);
+        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
@@ -308,14 +310,12 @@ void StartNewProject()
         glActiveTexture(GL_TEXTURE0);
         glBindVertexArray(VAO_plane);
         for (const auto& plane : planes) {
-            cout << *texs["metal_tex"] << endl;
             glBindTexture(GL_TEXTURE_2D, *texs[plane.second.texture]);
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, glm::vec3(plane.second.posx, plane.second.posy, plane.second.posz));
             model = glm::scale(model, glm::vec3(plane.second.scalex, plane.second.scaley, plane.second.scalez));
             shader.setMat4("model", model);
             glDrawArrays(GL_TRIANGLES, 0, 6);
-            cout << " plane done" << endl;
         }
         glBindVertexArray(0);
         stbi_set_flip_vertically_on_load(true);
@@ -336,7 +336,6 @@ void StartNewProject()
         glStencilMask(0xFF);
 
         // cubes
-        cout << "cube";
         glActiveTexture(GL_TEXTURE0);
         glBindVertexArray(VAO_cube);
         for (auto& cube : cubes) {
@@ -409,8 +408,27 @@ void StartNewProject()
         glDepthFunc(GL_LESS);
 
         glDisable(GL_DEPTH_TEST);
-    
-        
+        glDisable(GL_STENCIL_TEST);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+        ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2(SCR_WIDTH, 50), ImGuiCond_Always);
+        ImGui::Begin("Tools", nullptr,
+        ImGuiWindowFlags_NoTitleBar |
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoMove |
+        ImGuiWindowFlags_NoScrollbar |
+        ImGuiWindowFlags_NoSavedSettings |
+        ImGuiWindowFlags_NoBackground |
+        ImGuiWindowFlags_AlwaysAutoResize);
+
+        ImGui::End();
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glfwSwapBuffers(window);
         glfwPollEvents();
         
