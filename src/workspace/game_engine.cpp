@@ -54,6 +54,8 @@ float lastFrame = 0.0f;
 
 json project_settings;
 
+extern GLFWwindow* main_window;
+
 extern unsigned int VAO_cube, VBO_cube;
 extern unsigned int VAO_plane, VBO_plane;
 extern unsigned int VAO_skybox, VBO_skybox;
@@ -83,24 +85,30 @@ void StartNewProject()
     // ------------------------------
     //IMGUI_CHECKVERSION(); already did
     //ImGui::CreateContext(); already did
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    ImGui::StyleColorsDark();
+    //ImGuiIO& io = ImGui::GetIO(); (void)io;
+    //ImGui::StyleColorsDark();
     //glfwInit(); already did
     get_settings();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "project", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "project", NULL, main_window);
     if (window == NULL)
     {
         cerr << "Failed to create GLFW window" << endl;
         glfwTerminate();
         return;
     }
+
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
+
+
+    ImGui::CreateContext();
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 330");
 
     //ImGui_ImplGlfw_InitForOpenGL(window,true); already did
     //ImGui_ImplOpenGL3_Init("#version 460"); already did
@@ -257,7 +265,7 @@ void StartNewProject()
     unsigned int texColorBuffer;
     glGenTextures(1, &texColorBuffer);
     glBindTexture(GL_TEXTURE_2D, texColorBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 800, 600, 0, GL_RGB,
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1400, 900, 0, GL_RGB,
         GL_UNSIGNED_BYTE, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -268,7 +276,7 @@ void StartNewProject()
     unsigned int rbo;
     glGenRenderbuffers(1, &rbo);
     glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 600);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 1400, 900);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
         GL_RENDERBUFFER, rbo);
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -279,26 +287,26 @@ void StartNewProject()
     boxShader.setInt("skybox", 0);
     while (!glfwWindowShouldClose(window))
     {
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_STENCIL_TEST);
-        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
         processInput(window);
 
-        //ImGui_ImplOpenGL3_NewFrame();
-        //ImGui_ImplGlfw_NewFrame();
-        //ImGui::NewFrame();
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
 
         glStencilMask(0xFF);
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glEnable(GL_DEPTH_TEST);
+        glEnable(GL_STENCIL_TEST);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+
+
         glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         shader.use();
@@ -407,27 +415,19 @@ void StartNewProject()
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glDepthFunc(GL_LESS);
 
-        glDisable(GL_DEPTH_TEST);
-        glDisable(GL_STENCIL_TEST);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
+        ImGui::SetNextWindowBgAlpha(1.0f); 
         ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-        ImGui::SetNextWindowSize(ImVec2(SCR_WIDTH, 50), ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2(SCR_WIDTH, 100), ImGuiCond_Always);
         ImGui::Begin("Tools", nullptr,
         ImGuiWindowFlags_NoTitleBar |
-        ImGuiWindowFlags_NoResize |
         ImGuiWindowFlags_NoMove |
         ImGuiWindowFlags_NoScrollbar |
-        ImGuiWindowFlags_NoSavedSettings |
-        ImGuiWindowFlags_NoBackground |
-        ImGuiWindowFlags_AlwaysAutoResize);
+        ImGuiWindowFlags_NoSavedSettings);
 
+        ImGui::Text("Tools and shit");
         ImGui::End();
         ImGui::Render();
+
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glfwSwapBuffers(window);
         glfwPollEvents();

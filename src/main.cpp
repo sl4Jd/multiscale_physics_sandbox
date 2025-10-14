@@ -154,7 +154,7 @@ int main()
 
 
     // Setup OpenGL version (3.0+)
-    const char* glsl_version = "#version 130";
+    const char* glsl_version = "#version 330";
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
@@ -225,21 +225,14 @@ int main()
 
         glfwSwapBuffers(main_window);
     }
-    
-    glfwDestroyWindow(main_window);
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
     if(open_new_project) {
         StartNewProject();
     }
     if(open_project){
         StartNewProject();
     }
-    // Cleanup
-    ma_device_uninit(&device);
-    ma_decoder_uninit(&decoder);
-    ma_engine_uninit(&engine);
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
-    glfwTerminate();
     return 0;
 }
