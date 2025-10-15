@@ -12,6 +12,17 @@ void Toolbar(){
         ImGuiWindowFlags_NoScrollbar |
         ImGuiWindowFlags_NoSavedSettings);
     
+    if(ImGui::Button("Add object", ImVec2(0, 0))){
+
+    }
+    ImGui::SameLine();
+    if(ImGui::Button("Save", ImVec2(0, 0))){
+
+    }
+    ImGui::SameLine();
+    if(ImGui::Button("Settings", ImVec2(0, 0))){
+
+    }
     ImGui::End();
     
 }
