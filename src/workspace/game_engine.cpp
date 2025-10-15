@@ -19,6 +19,7 @@
 #include "create_project.h"
 #include "save_project.h"
 #include "primitives.h"
+#include "toolbar.h"
 
 using json = nlohmann::json;
 using namespace std;
@@ -415,17 +416,8 @@ void StartNewProject()
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glDepthFunc(GL_LESS);
 
-        ImGui::SetNextWindowBgAlpha(1.0f); 
-        ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-        ImGui::SetNextWindowSize(ImVec2(SCR_WIDTH, 100), ImGuiCond_Always);
-        ImGui::Begin("Tools", nullptr,
-        ImGuiWindowFlags_NoTitleBar |
-        ImGuiWindowFlags_NoMove |
-        ImGuiWindowFlags_NoScrollbar |
-        ImGuiWindowFlags_NoSavedSettings);
+        Toolbar();
 
-        ImGui::Text("Tools and shit");
-        ImGui::End();
         ImGui::Render();
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
