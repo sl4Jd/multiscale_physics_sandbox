@@ -13,15 +13,21 @@ void Toolbar(){
         ImGuiWindowFlags_NoSavedSettings);
     
     if(ImGui::Button("Add object", ImVec2(0, 0))){
-
+        ImGui::OpenPopup("add object");
     }
     ImGui::SameLine();
     if(ImGui::Button("Save", ImVec2(0, 0))){
-
+        
     }
     ImGui::SameLine();
     if(ImGui::Button("Settings", ImVec2(0, 0))){
 
+    }
+    if(ImGui::BeginPopup("add object")) {
+        if (ImGui::Button("cancel")){
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
     }
     ImGui::End();
     
