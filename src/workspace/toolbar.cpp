@@ -23,9 +23,21 @@ void Toolbar(){
     if(ImGui::Button("Settings", ImVec2(0, 0))){
 
     }
-    if(ImGui::BeginPopup("add object")) {
-        if (ImGui::Button("cancel")){
-            ImGui::CloseCurrentPopup();
+    if(ImGui::BeginPopupModal("add object")) {
+        ImGui::Text("Add object");
+        if(ImGui::Button("cube", ImVec2(100,70))){
+            
+        }
+        ImGui::SameLine();
+        if(ImGui::Button("plane", ImVec2(100,70))){
+            
+        }
+        if(ImGui::Button("cancel")){
+
+        }
+        ImGui::SameLine();
+        if(ImGui::Button("add object")){
+
         }
         ImGui::EndPopup();
     }
