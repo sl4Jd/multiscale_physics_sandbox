@@ -55,7 +55,12 @@ float lastFrame = 0.0f;
 
 json project_settings;
 
+json general_settings;
+
+float masterVolume, UIVolume;
+
 extern GLFWwindow* main_window;
+
 
 extern unsigned int VAO_cube, VBO_cube;
 extern unsigned int VAO_plane, VBO_plane;
@@ -78,6 +83,12 @@ void get_settings(){
                             obj["texture"].get<string>()
         });
     }
+
+    ifstream file_gen_sett("user_data/user_settings/settings.json");
+    file_gen_sett >> general_settings;
+    masterVolume = general_settings["master_volume"];
+    UIVolume = general_settings["UI_volume"];
+
 }
 void StartNewProject()
 {

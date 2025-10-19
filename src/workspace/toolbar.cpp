@@ -1,6 +1,15 @@
 #include <imgui.h>
 #include "toolbar.h"
+#include "game_engine.h"
+#include <json.hpp>
+#include <fstream>
 
+using json = nlohmann::json;
+using namespace std;
+
+extern json general_settings;
+
+extern float masterVolume, UIVolume;
 
 void Toolbar(){
     ImGui::SetNextWindowBgAlpha(1.0f); 
@@ -21,7 +30,7 @@ void Toolbar(){
     }
     ImGui::SameLine();
     if(ImGui::Button("Settings", ImVec2(0, 0))){
-
+        ImGui::OpenPopup("settings_popup");
     }
     if(ImGui::BeginPopupModal("add object")) {
         ImGui::Text("Add object");
@@ -33,11 +42,27 @@ void Toolbar(){
             
         }
         if(ImGui::Button("cancel")){
-
+            ImGui::CloseCurrentPopup();
         }
         ImGui::SameLine();
         if(ImGui::Button("add object")){
-
+            
+        }
+        ImGui::EndPopup();
+    }
+    if(ImGui::BeginPopupModal("settings_popup")) {
+        ImGui::SliderFloat("master_volume", &masterVolume, 0.0f, 1.0f);
+        ImGui::SliderFloat("UI_volume", &UIVolume, 0.0f, 1.0f);
+        if(ImGui::Button("cancel")){
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::SameLine();
+        if(ImGui::Button("Save")) {
+            general_settings["master_volume"] = masterVolume;
+            general_settings["UI_volume"] = UIVolume;
+            std::ofstream output("user_data/user_settings/settings.json");
+            output << general_settings.dump(4);
+            ImGui::CloseCurrentPopup();
         }
         ImGui::EndPopup();
     }
