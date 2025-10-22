@@ -4,7 +4,6 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <string>
-#include <miniaudio.h>
 #include <json.hpp>
 #include <fstream>
 #include <vector>
@@ -16,6 +15,7 @@
 #include "open_project.h"
 #include "main_menu.h"
 #include "settings.h"
+#include "sounds.h"
 
 
 using json = nlohmann::json;
@@ -32,8 +32,6 @@ const char* hover_sound = "assets/sound/hover.wav";
 vector<const char*> languages = { "english", "srpski"};
 int current_lang_index = 0;
 
-ma_sound clickSound;
-ma_sound hoverSound;
 extern bool open_new_project;
 extern bool open_project;
 
@@ -44,9 +42,8 @@ AppState currentAppState = AppState::MainMenu;
 
 GLFWwindow* main_window;
 
-static ma_decoder decoder; 
-static ma_device device;
-ma_engine engine;
+//static ma_decoder decoder; 
+//static ma_device device;
 
 float master_volume = 1.0f;
 float ui_volume = 1.0f;
@@ -70,8 +67,8 @@ void loadsettings() {
     }
     master_volume = settings["master_volume"];
     ui_volume = settings["UI_volume"];
-    ma_sound_set_volume(&clickSound, powf(master_volume, 3.0f)*powf(ui_volume, 3.0f));
-    ma_sound_set_volume(&hoverSound, powf(master_volume, 3.0f)*powf(ui_volume, 3.0f));
+    set_click_sound(powf(master_volume, 3.0f)*powf(ui_volume, 3.0f));
+    set_hover_sound(powf(master_volume, 3.0f)*powf(ui_volume, 3.0f));
     file.close();
 }
 bool loadLanguage(const string& lang) {
@@ -92,7 +89,7 @@ string tr(const std::string& key) {
     if (translations.count(key)) return translations[key];
     return key; // fallback
 }
-static void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount) {
+/*static void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount) {
     ma_decoder* pDecoder = (ma_decoder*)pDevice->pUserData;
     if (pDecoder == NULL) {
         return;
@@ -134,17 +131,13 @@ static void load_audio(){
         ma_decoder_uninit(&decoder);
         return;
     }
-}
+}*/
 
 int main()
 {
-    //load_audio();
-    if (ma_engine_init(NULL, &engine) != MA_SUCCESS) {
-        printf("Failed to init engine\n");
-        return 1;
-    }
-    ma_sound_init_from_file(&engine, "assets/sound/click.wav", 0, NULL, NULL, &clickSound);
-    ma_sound_init_from_file(&engine, "assets/sound/hover.wav", 0, NULL, NULL, &hoverSound);
+    init_sound();
+
+
     loadsettings();
 
     loadLanguage(currentLang);

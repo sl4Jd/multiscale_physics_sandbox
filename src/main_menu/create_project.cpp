@@ -4,6 +4,7 @@
 #include "main.h"
 #include "create_project.h"
 #include "zip_utils.h"
+#include "sounds.h"
 
 #include <GLFW/glfw3.h>
 #include <unordered_map>
@@ -11,7 +12,6 @@
 #include <filesystem>
 #include <iostream>
 #include <string>
-#include <miniaudio.h>
 
 using namespace std;
 
@@ -21,9 +21,6 @@ extern AppState currentAppState;
 
 extern int windowWidth;
 extern int windowHeight;
-
-extern ma_sound clickSound;
-extern ma_sound hoverSound;
 
 extern unordered_map<string, string> translations;
 
@@ -65,7 +62,7 @@ void CreateProject()
     ImGui::SetCursorPosX(50);
     if (ImGui::Button(tr("menu.back").c_str(), ImVec2(200, 70)))
     {
-        ma_sound_start(&clickSound);
+        play_click_sound();
         no_name = false;
         name_exists = false;
         currentAppState = AppState::MainMenu;
@@ -73,7 +70,7 @@ void CreateProject()
     if(ImGui::IsItemHovered())
     {
         ImGuiID id = ImGui::GetItemID();
-        if(some_was_hovered != id) ma_sound_start(&hoverSound);
+        if(some_was_hovered != id) play_hover_sound();
         some_hovered = id;
     }
     ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 100);
@@ -81,7 +78,7 @@ void CreateProject()
 
     if (ImGui::Button(tr("menu.create").c_str(), ImVec2(200, 70)))
     {
-        ma_sound_start(&clickSound);
+        play_click_sound();
         if (inputBuffer[0] == '\0') {
             no_name = true;
         }
@@ -129,7 +126,7 @@ void CreateProject()
     if(ImGui::IsItemHovered())
     {
         ImGuiID id = ImGui::GetItemID();
-        if(some_was_hovered != id) ma_sound_start(&hoverSound);
+        if(some_was_hovered != id) play_hover_sound();
         some_hovered = id;
     }
     some_was_hovered = some_hovered;

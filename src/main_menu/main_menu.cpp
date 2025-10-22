@@ -1,5 +1,4 @@
 #include <imgui.h>
-#include <miniaudio.h>
 #include <unordered_map>
 #include <string>
 #include <iostream>
@@ -9,6 +8,7 @@
 #include "appstate.h"
 #include "main.h"
 #include "main_menu.h"
+#include "sounds.h"
 
 using json = nlohmann::json;
 using namespace std;
@@ -23,9 +23,6 @@ extern int windowHeight;
 
 extern ImFont* lucida_big;
 extern ImFont* lucida_small;
-
-extern ma_sound clickSound;
-extern ma_sound hoverSound;
 
 static ImGuiID some_hovered = 0;
 static ImGuiID some_was_hovered = 0;
@@ -44,12 +41,12 @@ static void ShowLanguageSelector() {
     if (ImGui::BeginCombo("##LanguageCombo", languages[current_lang_index])) {
         if(combo_open == false) {
             combo_open = true;
-            ma_sound_start(&clickSound);
+            play_click_sound();
         }
         for (int n = 0; n < languages.size(); n++) {
             bool is_selected = (current_lang_index == n);
             if (ImGui::Selectable(languages[n], is_selected, ImGuiSelectableFlags_None, ImVec2(0, 0))) {
-                ma_sound_start(&clickSound);
+                play_click_sound();
                 current_lang_index = n; // update selected language
                 settings["language"] = languages[current_lang_index];
                 ofstream file("user_data/user_settings/settings.json");
@@ -58,7 +55,7 @@ static void ShowLanguageSelector() {
             }
             if (ImGui::IsItemHovered()) {
                 ImGuiID id = ImGui::GetItemID();
-                if(some_was_hovered != id) ma_sound_start(&hoverSound);
+                if(some_was_hovered != id) play_hover_sound();
                 some_hovered = id;
             }
             if (is_selected)
@@ -72,7 +69,7 @@ static void ShowLanguageSelector() {
     if (ImGui::IsItemHovered()) {
         ImGuiID id = ImGui::GetItemID();
         if(some_hovered == 0) {
-            if(some_was_hovered != id) ma_sound_start(&hoverSound);
+            if(some_was_hovered != id) play_hover_sound();
             some_hovered = id;
         }
     }
@@ -101,11 +98,11 @@ void ShowStartWindow() {
     ImGui::SetCursorPosX(windowWidth/2 - 250);
     if (ImGui::Button(tr("menu.new_project").c_str(), ImVec2(500, 100))) {
         currentAppState = AppState::CreateProject;
-        ma_sound_start(&clickSound);
+        play_click_sound();
     }
     if (ImGui::IsItemHovered()) {
         ImGuiID id = ImGui::GetItemID();
-        if(some_was_hovered != id) ma_sound_start(&hoverSound);
+        if(some_was_hovered != id) play_hover_sound();
         some_hovered = id;
     }
 
@@ -113,11 +110,11 @@ void ShowStartWindow() {
     ImGui::SetCursorPosX(windowWidth/2 - 250);
     if (ImGui::Button(tr("menu.open_project").c_str(), ImVec2(500, 100))) {
         currentAppState = AppState::OpenProject;
-        ma_sound_start(&clickSound);
+        play_click_sound();
     }
     if (ImGui::IsItemHovered()) {
         ImGuiID id = ImGui::GetItemID();
-        if(some_was_hovered != id) ma_sound_start(&hoverSound);
+        if(some_was_hovered != id) play_hover_sound();
         some_hovered = id;
     }
 
@@ -125,11 +122,11 @@ void ShowStartWindow() {
     ImGui::SetCursorPosX(windowWidth/2 - 250);
     if (ImGui::Button((tr("menu.settings")).c_str(), ImVec2(500, 100))) {
         currentAppState = AppState::Settings;
-        ma_sound_start(&clickSound);
+        play_click_sound();
     }
     if (ImGui::IsItemHovered()) {
         ImGuiID id = ImGui::GetItemID();
-        if(some_was_hovered != id) ma_sound_start(&hoverSound);
+        if(some_was_hovered != id) play_hover_sound();;
         some_hovered = id;
     }
 

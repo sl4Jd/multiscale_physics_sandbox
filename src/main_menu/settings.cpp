@@ -1,5 +1,4 @@
 #include <imgui.h>
-#include <miniaudio.h>
 #include <json.hpp>
 #include <fstream>
 #include <iostream>
@@ -8,6 +7,7 @@
 #include "main.h"
 #include "appstate.h"
 #include "settings.h"
+#include "sounds.h"
 
 using json = nlohmann::json;
 using namespace std;
@@ -18,9 +18,6 @@ extern int windowWidth;
 extern int windowHeight;
 
 extern string tr(const string& key);
-
-extern ma_sound clickSound;
-extern ma_sound hoverSound;
 
 extern json settings;
 
@@ -49,21 +46,21 @@ void Settings(){
     ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 100);
     ImGui::SetCursorPosX(50);
     if (ImGui::Button(tr("menu.back").c_str(), ImVec2(200, 70))) {
-        ma_sound_start(&clickSound);
+        play_click_sound();
         currentAppState = AppState::MainMenu;
     }
     if (ImGui::IsItemHovered()) {
         ImGuiID id = ImGui::GetItemID();
-        if(some_was_hovered != id) ma_sound_start(&hoverSound);
+        if(some_was_hovered != id) play_hover_sound();
         some_hovered = id;
     }
     ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 100);
     ImGui::SetCursorPosX(ImGui::GetWindowSize().x - 250); 
 
     if (ImGui::Button(tr("save").c_str(), ImVec2(200, 70))) {
-        ma_sound_start(&clickSound);
-        ma_sound_set_volume(&clickSound, powf(master_volume, 3.0f)*powf(ui_volume, 3.0f));
-        ma_sound_set_volume(&hoverSound, powf(master_volume, 3.0f)*powf(ui_volume, 3.0f));
+        play_hover_sound();
+        set_click_sound(powf(master_volume, 3.0f)*powf(ui_volume, 3.0f));
+        set_hover_sound(powf(master_volume, 3.0f)*powf(ui_volume, 3.0f));
         settings["master_volume"] = master_volume;
         settings["UI_volume"] = ui_volume;
         ofstream output("user_data/user_settings/settings.json");
@@ -71,7 +68,7 @@ void Settings(){
     }
     if (ImGui::IsItemHovered()) {
         ImGuiID id = ImGui::GetItemID();
-        if(some_was_hovered != id) ma_sound_start(&hoverSound);
+        if(some_was_hovered != id) play_hover_sound();
         some_hovered = id;
     }
     some_was_hovered = some_hovered;

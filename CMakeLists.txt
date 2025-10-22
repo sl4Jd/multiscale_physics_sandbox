@@ -56,7 +56,6 @@ add_executable(${EXECUTABLE_NAME} src/main.cpp)
 target_link_libraries(${EXECUTABLE_NAME} PRIVATE 
     imgui 
     glad 
-    miniaudio 
     miniz 
     nlohmann_json 
     glfw 
@@ -76,7 +75,6 @@ target_include_directories(main_menu PRIVATE
 )
 target_link_libraries(main_menu PRIVATE
     imgui 
-    miniaudio 
     nlohmann_json 
     glfw 
 )
@@ -86,8 +84,7 @@ target_include_directories(workspace PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/includes
 )
 target_link_libraries(workspace PRIVATE
-    imgui 
-    miniaudio 
+    imgui
     nlohmann_json 
     glfw 
     glad
@@ -102,6 +99,7 @@ target_include_directories(utils PRIVATE
 )
 target_link_libraries(utils PRIVATE
     miniz
+    miniaudio
 )
 
 

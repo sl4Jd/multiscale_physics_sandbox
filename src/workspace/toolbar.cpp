@@ -3,6 +3,7 @@
 #include "game_engine.h"
 #include <json.hpp>
 #include <fstream>
+#include "sounds.h"
 
 using json = nlohmann::json;
 using namespace std;
@@ -22,31 +23,55 @@ void Toolbar(){
         ImGuiWindowFlags_NoSavedSettings);
     
     if(ImGui::Button("Add object", ImVec2(0, 0))){
+        play_click_sound();
         ImGui::OpenPopup("add object");
+    }
+    if(ImGui::IsItemHovered()){
+        play_hover_sound();
     }
     ImGui::SameLine();
     if(ImGui::Button("Save", ImVec2(0, 0))){
-        
+        play_click_sound();
+    }
+    if(ImGui::IsItemHovered()){
+        play_hover_sound();
     }
     ImGui::SameLine();
     if(ImGui::Button("Settings", ImVec2(0, 0))){
+        play_click_sound();
         ImGui::OpenPopup("settings_popup");
+    }
+    if(ImGui::IsItemHovered()){
+        play_hover_sound();
     }
     if(ImGui::BeginPopupModal("add object")) {
         ImGui::Text("Add object");
         if(ImGui::Button("cube", ImVec2(100,70))){
-            
+            play_click_sound();
+        }
+        if(ImGui::IsItemHovered()){
+            play_hover_sound();
         }
         ImGui::SameLine();
         if(ImGui::Button("plane", ImVec2(100,70))){
-            
+            play_click_sound();
+        }
+        if(ImGui::IsItemHovered()){
+            play_hover_sound();
         }
         if(ImGui::Button("cancel")){
+            play_click_sound();
             ImGui::CloseCurrentPopup();
+        }
+        if(ImGui::IsItemHovered()){
+            play_hover_sound();
         }
         ImGui::SameLine();
         if(ImGui::Button("add object")){
-            
+            play_click_sound();
+        }
+        if(ImGui::IsItemHovered()){
+            play_hover_sound();
         }
         ImGui::EndPopup();
     }
@@ -54,15 +79,23 @@ void Toolbar(){
         ImGui::SliderFloat("master_volume", &masterVolume, 0.0f, 1.0f);
         ImGui::SliderFloat("UI_volume", &UIVolume, 0.0f, 1.0f);
         if(ImGui::Button("cancel")){
+            play_click_sound();
             ImGui::CloseCurrentPopup();
+        }
+        if(ImGui::IsItemHovered()){
+            play_hover_sound();
         }
         ImGui::SameLine();
         if(ImGui::Button("Save")) {
+            play_click_sound();
             general_settings["master_volume"] = masterVolume;
             general_settings["UI_volume"] = UIVolume;
             std::ofstream output("user_data/user_settings/settings.json");
             output << general_settings.dump(4);
             ImGui::CloseCurrentPopup();
+        }
+        if(ImGui::IsItemHovered()){
+            play_hover_sound();
         }
         ImGui::EndPopup();
     }
