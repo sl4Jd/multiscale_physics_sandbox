@@ -5,6 +5,7 @@
 #include "open_project.h"
 #include "zip_utils.h"
 #include "sounds.h"
+#include "translatons.h"
 
 #include <GLFW/glfw3.h>
 #include <fstream>
@@ -22,7 +23,6 @@ extern int windowWidth;
 extern int windowHeight;
 
 extern unordered_map<string, string> translations;
-extern string tr(const string& key);
 
 bool no_selected = false;
 bool name_is_empty = false;
@@ -98,10 +98,10 @@ void DrawSelectableBoxes()
                 save_edit();
             }
             if(name_is_empty){
-                ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), tr("menu.error_no_name").c_str());
+                ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), translate("menu.error_no_name").c_str());
             }
             if(already_named){
-                ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), tr("menu.error_name_exists").c_str());
+                ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), translate("menu.error_name_exists").c_str());
             }
         }
         else {
@@ -139,9 +139,9 @@ void DrawSelectableBoxes()
                 pos.x = max.x - 350;              
                 ImGui::SetCursorPos(pos);
                 ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(0, 255, 0, 255));
-                if(ImGui::Button(tr("delete").c_str())) {
+                if(ImGui::Button(translate("delete").c_str())) {
                     play_click_sound();
-                    ImGui::OpenPopup(tr("menu.delete_popup").c_str());
+                    ImGui::OpenPopup(translate("menu.delete_popup").c_str());
                 }
                 if (ImGui::IsItemHovered())
                 {
@@ -151,7 +151,7 @@ void DrawSelectableBoxes()
                     hovered_inside_select = true;
                 }
                 ImGui::SameLine();
-                if (ImGui::Button(tr("rename").c_str()))
+                if (ImGui::Button(translate("rename").c_str()))
                 {
                     play_click_sound();
                     editing = true;
@@ -171,10 +171,10 @@ void DrawSelectableBoxes()
         }
         ImGui::Dummy(ImVec2(0, 15));
     }
-    if (ImGui::BeginPopupModal(tr("menu.delete_popup").c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize))
+    if (ImGui::BeginPopupModal(translate("menu.delete_popup").c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize))
     {
-        ImGui::Text(tr("delete.confirm").c_str(), labels[selectedIndex].c_str());
-        if (ImGui::Button(tr("no").c_str()))
+        ImGui::Text(translate("delete.confirm").c_str(), labels[selectedIndex].c_str());
+        if (ImGui::Button(translate("no").c_str()))
         {
             play_click_sound();
             ImGui::CloseCurrentPopup();
@@ -183,7 +183,7 @@ void DrawSelectableBoxes()
             play_hover_sound();
         }
         ImGui::SameLine();
-        if (ImGui::Button(tr("yes").c_str()))
+        if (ImGui::Button(translate("yes").c_str()))
         {
             play_click_sound();
             filesystem::remove("user_data/projects/" + labels[selectedIndex] + ".msps");
@@ -212,15 +212,15 @@ void OpenProject()
         ImGuiWindowFlags_NoSavedSettings |
         ImGuiWindowFlags_NoBackground |
         ImGuiWindowFlags_AlwaysAutoResize);
-    ImGui::Text(tr("menu.select_project").c_str());
+    ImGui::Text(translate("menu.select_project").c_str());
     some_hovered = 0;
     DrawSelectableBoxes();
     if (no_selected) {
-        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), tr("menu.select_project").c_str());
+        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), translate("menu.select_project").c_str());
     }
     ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 100);
     ImGui::SetCursorPosX(50);
-    if (ImGui::Button(tr("menu.back").c_str(), ImVec2(200, 70)))
+    if (ImGui::Button(translate("menu.back").c_str(), ImVec2(200, 70)))
     {
         play_click_sound();
         if(editing){
@@ -240,7 +240,7 @@ void OpenProject()
     ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 100);
     ImGui::SetCursorPosX(ImGui::GetWindowSize().x - 250); 
 
-    if (ImGui::Button(tr("menu.open").c_str(), ImVec2(200, 70)))
+    if (ImGui::Button(translate("menu.open").c_str(), ImVec2(200, 70)))
     {
         play_click_sound();
         if(editing){

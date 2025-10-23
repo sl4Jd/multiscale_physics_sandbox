@@ -1,0 +1,31 @@
+#include <string>
+#include <fstream>
+#include <json.hpp>
+
+
+using namespace std;
+using json = nlohmann::json;
+
+static string language = "english";
+
+static unordered_map<string, string> translations;
+
+void loadLanguage(const string& lang) {
+    ifstream file("assets/local/" + lang + ".json");
+    if (!file.is_open()) return;
+
+    json j;
+    file >> j;
+
+    translations.clear();
+    for (auto it = j.begin(); it != j.end(); ++it) {
+        translations[it.key()] = it.value();
+    }
+    language = lang;
+}
+
+string translate(const string& key) {
+    if (translations.count(key)) return translations[key];
+    return key; // fallback
+}
+

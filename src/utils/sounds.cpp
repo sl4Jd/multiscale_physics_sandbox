@@ -1,6 +1,7 @@
 #include "sounds.h"
 #include <miniaudio.h>
 #include <stdexcept>
+#include <math.h>
 
 using namespace std;
 
@@ -27,10 +28,10 @@ void play_hover_sound(){
     ma_sound_start(&hoverSound);
 }
 
-void set_click_sound(float volume){
-    ma_sound_set_volume(&clickSound, volume);
+void set_click_sound(float master_volume, float ui_volume){
+    ma_sound_set_volume(&clickSound, powf(master_volume, 2.5f)*powf(ui_volume, 2.5f));
 }
 
-void set_hover_sound(float volume){
-    ma_sound_set_volume(&hoverSound, volume);
+void set_hover_sound(float master_volume, float ui_volume){
+    ma_sound_set_volume(&hoverSound, powf(master_volume, 2.5f)*powf(ui_volume, 2.5f));
 }

@@ -20,6 +20,7 @@
 #include "save_project.h"
 #include "primitives.h"
 #include "toolbar.h"
+#include "sounds.h"
 
 using json = nlohmann::json;
 using namespace std;

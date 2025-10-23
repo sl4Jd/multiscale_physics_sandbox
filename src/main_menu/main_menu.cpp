@@ -9,14 +9,12 @@
 #include "main.h"
 #include "main_menu.h"
 #include "sounds.h"
+#include "translatons.h"
 
 using json = nlohmann::json;
 using namespace std;
 
 extern AppState currentAppState;
-
-extern bool loadLanguage(const string& lang);
-extern string tr(const string& key);
 
 extern int windowWidth;
 extern int windowHeight;
@@ -96,7 +94,7 @@ void ShowStartWindow() {
     ImGui::Spacing();
     ImGui::Spacing();
     ImGui::SetCursorPosX(windowWidth/2 - 250);
-    if (ImGui::Button(tr("menu.new_project").c_str(), ImVec2(500, 100))) {
+    if (ImGui::Button(translate("menu.new_project").c_str(), ImVec2(500, 100))) {
         currentAppState = AppState::CreateProject;
         play_click_sound();
     }
@@ -108,7 +106,7 @@ void ShowStartWindow() {
 
     ImGui::Spacing();
     ImGui::SetCursorPosX(windowWidth/2 - 250);
-    if (ImGui::Button(tr("menu.open_project").c_str(), ImVec2(500, 100))) {
+    if (ImGui::Button(translate("menu.open_project").c_str(), ImVec2(500, 100))) {
         currentAppState = AppState::OpenProject;
         play_click_sound();
     }
@@ -120,7 +118,7 @@ void ShowStartWindow() {
 
     ImGui::Spacing();
     ImGui::SetCursorPosX(windowWidth/2 - 250);
-    if (ImGui::Button((tr("menu.settings")).c_str(), ImVec2(500, 100))) {
+    if (ImGui::Button((translate("menu.settings")).c_str(), ImVec2(500, 100))) {
         currentAppState = AppState::Settings;
         play_click_sound();
     }

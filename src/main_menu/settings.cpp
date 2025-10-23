@@ -8,6 +8,7 @@
 #include "appstate.h"
 #include "settings.h"
 #include "sounds.h"
+#include "translatons.h"
 
 using json = nlohmann::json;
 using namespace std;
@@ -16,8 +17,6 @@ extern AppState currentAppState;
 
 extern int windowWidth;
 extern int windowHeight;
-
-extern string tr(const string& key);
 
 extern json settings;
 
@@ -41,11 +40,11 @@ void Settings(){
     some_hovered = 0;
     ImGui::SetCursorPosY(50);
     ImGui::SetCursorPosX(50);
-    ImGui::SliderFloat(tr("master_volume").c_str(), &master_volume, 0.0f, 1.0f);
-    ImGui::SliderFloat(tr("UI_volume").c_str(), &ui_volume, 0.0f, 1.0f);
+    ImGui::SliderFloat(translate("master_volume").c_str(), &master_volume, 0.0f, 1.0f);
+    ImGui::SliderFloat(translate("UI_volume").c_str(), &ui_volume, 0.0f, 1.0f);
     ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 100);
     ImGui::SetCursorPosX(50);
-    if (ImGui::Button(tr("menu.back").c_str(), ImVec2(200, 70))) {
+    if (ImGui::Button(translate("menu.back").c_str(), ImVec2(200, 70))) {
         play_click_sound();
         currentAppState = AppState::MainMenu;
     }
@@ -57,10 +56,10 @@ void Settings(){
     ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 100);
     ImGui::SetCursorPosX(ImGui::GetWindowSize().x - 250); 
 
-    if (ImGui::Button(tr("save").c_str(), ImVec2(200, 70))) {
+    if (ImGui::Button(translate("save").c_str(), ImVec2(200, 70))) {
         play_click_sound();
-        set_click_sound(powf(master_volume, 3.0f)*powf(ui_volume, 3.0f));
-        set_hover_sound(powf(master_volume, 3.0f)*powf(ui_volume, 3.0f));
+        set_click_sound(master_volume, ui_volume);
+        set_hover_sound(master_volume, ui_volume);
         settings["master_volume"] = master_volume;
         settings["UI_volume"] = ui_volume;
         ofstream output("user_data/user_settings/settings.json");

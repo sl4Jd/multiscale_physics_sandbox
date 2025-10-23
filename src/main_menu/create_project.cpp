@@ -5,6 +5,7 @@
 #include "create_project.h"
 #include "zip_utils.h"
 #include "sounds.h"
+#include "translatons.h"
 
 #include <GLFW/glfw3.h>
 #include <unordered_map>
@@ -23,8 +24,6 @@ extern int windowWidth;
 extern int windowHeight;
 
 extern unordered_map<string, string> translations;
-
-extern string tr(const string& key);
 
 bool no_name = false;
 bool name_exists = false;
@@ -46,21 +45,21 @@ void CreateProject()
         ImGuiWindowFlags_NoBackground |
         ImGuiWindowFlags_AlwaysAutoResize);
     
-    ImGui::Text(tr("menu.enter_project_name").c_str());
+    ImGui::Text(translate("menu.enter_project_name").c_str());
     ImGui::InputText("##InputName", inputBuffer, IM_ARRAYSIZE(inputBuffer));
 
     if (no_name) {
-        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), tr("menu.error_no_name").c_str());
+        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), translate("menu.error_no_name").c_str());
     }
 
     if (name_exists) {
-        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), tr("menu.error_name_exists").c_str());
+        ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), translate("menu.error_name_exists").c_str());
     }
 
     some_hovered = 0;
     ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 100);
     ImGui::SetCursorPosX(50);
-    if (ImGui::Button(tr("menu.back").c_str(), ImVec2(200, 70)))
+    if (ImGui::Button(translate("menu.back").c_str(), ImVec2(200, 70)))
     {
         play_click_sound();
         no_name = false;
@@ -76,7 +75,7 @@ void CreateProject()
     ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 100);
     ImGui::SetCursorPosX(ImGui::GetWindowSize().x - 250); 
 
-    if (ImGui::Button(tr("menu.create").c_str(), ImVec2(200, 70)))
+    if (ImGui::Button(translate("menu.create").c_str(), ImVec2(200, 70)))
     {
         play_click_sound();
         if (inputBuffer[0] == '\0') {

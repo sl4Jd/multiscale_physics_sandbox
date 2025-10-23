@@ -4,6 +4,7 @@
 set(UTIL_SOURCES
     zip_utils.cpp
     sounds.cpp
+    translations.cpp
 )
 
 # make library

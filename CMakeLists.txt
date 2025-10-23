@@ -100,6 +100,7 @@ target_include_directories(utils PRIVATE
 target_link_libraries(utils PRIVATE
     miniz
     miniaudio
+    nlohmann_json 
 )
 
 

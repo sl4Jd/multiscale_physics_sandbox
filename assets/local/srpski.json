@@ -17,5 +17,9 @@
   "delete.confirm": "Da li ste sigurni da želite da izbrišete projekat        \n '%s'?",
   "save": "Sačuvaj",
   "master_volume": "Glavna jačina zvuka",
-  "UI_volume": "jačina zvuka UI-a"
+  "UI_volume": "jačina zvuka UI-a",
+  "add_object": "Dodaj objekat",
+  "cancel": "Poništi",
+  "cube": "Kocka",
+  "plane": "Površ"
 }

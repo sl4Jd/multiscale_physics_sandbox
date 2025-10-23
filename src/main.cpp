@@ -16,6 +16,7 @@
 #include "main_menu.h"
 #include "settings.h"
 #include "sounds.h"
+#include "translatons.h"
 
 
 using json = nlohmann::json;
@@ -48,7 +49,6 @@ GLFWwindow* main_window;
 float master_volume = 1.0f;
 float ui_volume = 1.0f;
 
-unordered_map<string, string> translations;
 string currentLang = "english";
 
 json settings;
@@ -67,27 +67,9 @@ void loadsettings() {
     }
     master_volume = settings["master_volume"];
     ui_volume = settings["UI_volume"];
-    set_click_sound(powf(master_volume, 3.0f)*powf(ui_volume, 3.0f));
-    set_hover_sound(powf(master_volume, 3.0f)*powf(ui_volume, 3.0f));
+    set_click_sound(master_volume, ui_volume);
+    set_hover_sound(master_volume, ui_volume);
     file.close();
-}
-bool loadLanguage(const string& lang) {
-    ifstream file("assets/local/" + lang + ".json");
-    if (!file.is_open()) return false;
-
-    json j;
-    file >> j;
-
-    translations.clear();
-    for (auto it = j.begin(); it != j.end(); ++it) {
-        translations[it.key()] = it.value();
-    }
-    currentLang = lang;
-    return true;
-}
-string tr(const std::string& key) {
-    if (translations.count(key)) return translations[key];
-    return key; // fallback
 }
 /*static void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount) {
     ma_decoder* pDecoder = (ma_decoder*)pDevice->pUserData;
@@ -136,7 +118,6 @@ static void load_audio(){
 int main()
 {
     init_sound();
-
 
     loadsettings();
 
