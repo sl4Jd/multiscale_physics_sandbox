@@ -58,7 +58,7 @@ void Settings(){
     ImGui::SetCursorPosX(ImGui::GetWindowSize().x - 250); 
 
     if (ImGui::Button(tr("save").c_str(), ImVec2(200, 70))) {
-        play_hover_sound();
+        play_click_sound();
         set_click_sound(powf(master_volume, 3.0f)*powf(ui_volume, 3.0f));
         set_hover_sound(powf(master_volume, 3.0f)*powf(ui_volume, 3.0f));
         settings["master_volume"] = master_volume;

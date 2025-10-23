@@ -12,6 +12,9 @@ extern json general_settings;
 
 extern float masterVolume, UIVolume;
 
+static ImGuiID some_hovered = 0;
+static ImGuiID some_was_hovered = 0;
+
 void Toolbar(){
     ImGui::SetNextWindowBgAlpha(1.0f); 
     ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
@@ -21,57 +24,73 @@ void Toolbar(){
         ImGuiWindowFlags_NoMove |
         ImGuiWindowFlags_NoScrollbar |
         ImGuiWindowFlags_NoSavedSettings);
+
+    some_hovered = 0;
     
     if(ImGui::Button("Add object", ImVec2(0, 0))){
         play_click_sound();
         ImGui::OpenPopup("add object");
     }
-    if(ImGui::IsItemHovered()){
-        play_hover_sound();
+    if (ImGui::IsItemHovered()) {
+        ImGuiID id = ImGui::GetItemID();
+        if(some_was_hovered != id) play_hover_sound();
+        some_hovered = id;
     }
     ImGui::SameLine();
     if(ImGui::Button("Save", ImVec2(0, 0))){
         play_click_sound();
     }
-    if(ImGui::IsItemHovered()){
-        play_hover_sound();
+    if (ImGui::IsItemHovered()) {
+        ImGuiID id = ImGui::GetItemID();
+        if(some_was_hovered != id) play_hover_sound();
+        some_hovered = id;
     }
     ImGui::SameLine();
     if(ImGui::Button("Settings", ImVec2(0, 0))){
         play_click_sound();
         ImGui::OpenPopup("settings_popup");
     }
-    if(ImGui::IsItemHovered()){
-        play_hover_sound();
+    if (ImGui::IsItemHovered()) {
+        ImGuiID id = ImGui::GetItemID();
+        if(some_was_hovered != id) play_hover_sound();
+        some_hovered = id;
     }
     if(ImGui::BeginPopupModal("add object")) {
         ImGui::Text("Add object");
         if(ImGui::Button("cube", ImVec2(100,70))){
             play_click_sound();
         }
-        if(ImGui::IsItemHovered()){
-            play_hover_sound();
+        if (ImGui::IsItemHovered()) {
+            ImGuiID id = ImGui::GetItemID();
+            if(some_was_hovered != id) play_hover_sound();
+            some_hovered = id;
         }
         ImGui::SameLine();
         if(ImGui::Button("plane", ImVec2(100,70))){
             play_click_sound();
         }
-        if(ImGui::IsItemHovered()){
-            play_hover_sound();
+        if (ImGui::IsItemHovered()) {
+            ImGuiID id = ImGui::GetItemID();
+            if(some_was_hovered != id) play_hover_sound();
+            some_hovered = id;
         }
         if(ImGui::Button("cancel")){
             play_click_sound();
             ImGui::CloseCurrentPopup();
         }
-        if(ImGui::IsItemHovered()){
-            play_hover_sound();
+        if (ImGui::IsItemHovered()) {
+            ImGuiID id = ImGui::GetItemID();
+            if(some_was_hovered != id) play_hover_sound();
+            some_hovered = id;
         }
         ImGui::SameLine();
         if(ImGui::Button("add object")){
             play_click_sound();
         }
-        if(ImGui::IsItemHovered()){
-            play_hover_sound();
+        if (ImGui::IsItemHovered()) {
+            ImGuiID id = ImGui::GetItemID();
+            if(some_was_hovered != id) play_hover_sound();
+            some_hovered = id;
         }
         ImGui::EndPopup();
     }
@@ -99,6 +118,7 @@ void Toolbar(){
         }
         ImGui::EndPopup();
     }
+    some_was_hovered = some_hovered;
     ImGui::End();
     
 }
