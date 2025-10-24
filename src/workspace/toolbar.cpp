@@ -6,6 +6,7 @@
 #include <fstream>
 #include "sounds.h"
 #include "translatons.h"
+#include "save_project.h"
 
 using json = nlohmann::json;
 using namespace std;
@@ -15,6 +16,8 @@ extern json general_settings;
 extern float masterVolume, UIVolume;
 
 extern bool stop_camera_movement;
+
+extern string name_of_project;
 
 static ImGuiID some_hovered = 0;
 static ImGuiID some_was_hovered = 0;
@@ -44,6 +47,7 @@ void Toolbar(){
     ImGui::SameLine();
     if(ImGui::Button(translate("save").c_str(), ImVec2(0, 0))){
         play_click_sound();
+        SaveProject(name_of_project);
     }
     if (ImGui::IsItemHovered()) {
         ImGuiID id = ImGui::GetItemID();

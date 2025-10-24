@@ -13,5 +13,4 @@ void SaveProject(const string& name){
     catch (const runtime_error& e){
         cerr << "Error: " << e.what() << "\n";
     }
-    filesystem::remove_all("user_data/projects/working");
 }

@@ -452,6 +452,7 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
         //save and quit
         SaveProject(project_settings["name"]);
+        filesystem::remove_all("user_data/projects/working");
         glfwSetWindowShouldClose(window, true);
     }
 
