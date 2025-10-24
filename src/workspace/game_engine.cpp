@@ -64,6 +64,8 @@ float masterVolume, UIVolume;
 
 ImFont* lucida;
 
+bool stop_camera_movement = false;
+
 extern GLFWwindow* main_window;
 
 
@@ -483,7 +485,7 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
         firstMouse = false;
     }
 
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && !stop_camera_movement)
     {
         if(!dragging){
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -508,5 +510,6 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 }
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    camera.ProcessMouseScroll(static_cast<float>(yoffset));
+    if(!stop_camera_movement)
+        camera.ProcessMouseScroll(static_cast<float>(yoffset));
 }

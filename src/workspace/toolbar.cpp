@@ -14,6 +14,8 @@ extern json general_settings;
 
 extern float masterVolume, UIVolume;
 
+extern bool stop_camera_movement;
+
 static ImGuiID some_hovered = 0;
 static ImGuiID some_was_hovered = 0;
 
@@ -31,6 +33,7 @@ void Toolbar(){
     
     if(ImGui::Button(translate("add_object").c_str(), ImVec2(0, 0))){
         play_click_sound();
+        stop_camera_movement = true;
         ImGui::OpenPopup(translate("add_object").c_str());
     }
     if (ImGui::IsItemHovered()) {
@@ -50,6 +53,7 @@ void Toolbar(){
     ImGui::SameLine();
     if(ImGui::Button(translate("menu.settings").c_str(), ImVec2(0, 0))){
         play_click_sound();
+        stop_camera_movement = true;
         ImGui::OpenPopup(translate("menu.settings").c_str());
     }
     if (ImGui::IsItemHovered()) {
@@ -78,6 +82,7 @@ void Toolbar(){
         }
         if(ImGui::Button(translate("cancel").c_str())){
             play_click_sound();
+            stop_camera_movement = false;
             ImGui::CloseCurrentPopup();
         }
         if (ImGui::IsItemHovered()) {
@@ -101,6 +106,7 @@ void Toolbar(){
         ImGui::SliderFloat(translate("UI_volume").c_str(), &UIVolume, 0.0f, 1.0f);
         if(ImGui::Button(translate("cancel").c_str())){
             play_click_sound();
+            stop_camera_movement = false;
             ImGui::CloseCurrentPopup();
         }
         if (ImGui::IsItemHovered()) {
@@ -117,6 +123,7 @@ void Toolbar(){
             general_settings["UI_volume"] = UIVolume;
             std::ofstream output("user_data/user_settings/settings.json");
             output << general_settings.dump(4);
+            stop_camera_movement = false;
             ImGui::CloseCurrentPopup();
         }
         if (ImGui::IsItemHovered()) {
