@@ -35,6 +35,8 @@ struct Object {
 };
 vector<Object> objects;
 
+string name_of_project;
+
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -60,6 +62,8 @@ json general_settings;
 
 float masterVolume, UIVolume;
 
+ImFont* lucida;
+
 extern GLFWwindow* main_window;
 
 
@@ -71,6 +75,7 @@ extern unsigned int VAO_transparent, VBO_transparent;
 void get_settings(){
     ifstream file("user_data/projects/working/scene.json");
     file >> project_settings;
+    name_of_project = project_settings["name"];
     for (auto& obj : project_settings["objects"]) {
         objects.push_back({ obj["name"], 
                             obj["type"], 
@@ -94,18 +99,11 @@ void get_settings(){
 void StartNewProject()
 {
 
-    // glfw: initialize and configure
-    // ------------------------------
-    //IMGUI_CHECKVERSION(); already did
-    //ImGui::CreateContext(); already did
-    //ImGuiIO& io = ImGui::GetIO(); (void)io;
-    //ImGui::StyleColorsDark();
-    //glfwInit(); already did
     get_settings();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "project", NULL, main_window);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, name_of_project.c_str(), NULL, main_window);
     if (window == NULL)
     {
         cerr << "Failed to create GLFW window" << endl;
@@ -120,6 +118,17 @@ void StartNewProject()
 
 
     ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
+    ImFontGlyphRangesBuilder builder;
+    builder.AddText("đčšćžĐČŠĆŽ");           // add serbian characters 
+    builder.AddRanges(io.Fonts->GetGlyphRangesDefault()); // add default ASCII characters
+
+    ImVector<ImWchar> glyph_ranges;
+    builder.BuildRanges(&glyph_ranges);
+    lucida = io.Fonts->AddFontFromFileTTF("assets/fonts/lucon.ttf", 16.0f, NULL, glyph_ranges.Data);
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
 
