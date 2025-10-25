@@ -1,12 +1,31 @@
 #include <string>
 #include <fstream>
 #include <json.hpp>
+#include "translatons.h"
+#include <vector>
 
 
 using namespace std;
 using json = nlohmann::json;
 
 static string language = "english";
+
+vector<string> getAvailableLanguages() {
+    return {"english", "srpski"};
+}
+
+int getLanguageIndex() {
+    auto langs = getAvailableLanguages();
+    for (size_t i = 0; i < langs.size(); ++i) {
+        if (langs[i] == language) return static_cast<int>(i);
+    }
+    return 0;
+}
+
+
+string getCurrentLanguage() {
+    return language;
+}
 
 static unordered_map<string, string> translations;
 
