@@ -69,9 +69,7 @@ void UnzipFile(const std::string& zipName) {
         }
 
     }
-    
+
     // Close the archive
     mz_zip_reader_end(&zipArchive);
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 }

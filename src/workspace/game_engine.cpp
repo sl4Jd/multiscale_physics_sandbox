@@ -13,6 +13,7 @@
 #include <imgui_impl_opengl3.h>
 #include <imgui_impl_glfw.h>
 #include <json.hpp>
+#include <thread>
 
 #include "camera.h"
 #include "model.h"
@@ -75,6 +76,9 @@ extern unsigned int VAO_skybox, VBO_skybox;
 extern unsigned int VAO_transparent, VBO_transparent;
 
 void get_settings(){
+    while (!std::filesystem::exists("user_data/projects/working/scene.json")) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    }
     ifstream file("user_data/projects/working/scene.json");
     file >> project_settings;
     name_of_project = project_settings["name"];
