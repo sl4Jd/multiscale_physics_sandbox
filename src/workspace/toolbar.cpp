@@ -8,6 +8,7 @@
 #include "sounds.h"
 #include "translatons.h"
 #include "save_project.h"
+#include "primitives.h"
 
 using json = nlohmann::json;
 using namespace std;
@@ -20,14 +21,21 @@ extern bool stop_camera_movement;
 
 extern string name_of_project;
 
+extern unordered_map<string, Cube> cubes;
+
+extern unordered_map<string, Plane> planes;
+
 static bool combo_open = false;
 
 static bool combo_first_time = true;
+
+static char inputBuffer[32] = "";
 
 static vector<string> languages;
 static int current_lang_index = 0;
 static string language = "";
 
+static bool show_cube_popup = false;
 
 static ImGuiID some_hovered = 0;
 static ImGuiID some_was_hovered = 0;
@@ -79,6 +87,8 @@ void Toolbar(){
         ImGui::Text(translate("add_object").c_str());
         if(ImGui::Button(translate("cube").c_str(), ImVec2(100,70))){
             play_click_sound();
+            ImGui::CloseCurrentPopup();
+            show_cube_popup = true;
         }
         if (ImGui::IsItemHovered()) {
             ImGuiID id = ImGui::GetItemID();
@@ -114,6 +124,10 @@ void Toolbar(){
             some_hovered = id;
         }
         ImGui::EndPopup();
+    }
+    if(show_cube_popup) {
+        ImGui::OpenPopup(translate("cube").c_str());
+        show_cube_popup = false;
     }
     ImGui::SetNextWindowSize(ImVec2(500, 250), ImGuiCond_Always);
     if(ImGui::BeginPopupModal(translate("menu.settings").c_str())) {
@@ -190,6 +204,29 @@ void Toolbar(){
             ImGuiID id = ImGui::GetItemID();
             if(some_was_hovered != id) play_hover_sound();
             some_hovered = id;
+        }
+        ImGui::EndPopup();
+    }
+    if(ImGui::BeginPopupModal(translate("cube").c_str())) {
+        ImGui::Text((translate("name")+": ").c_str());
+        ImGui::SameLine();
+        ImGui::InputText("##InputName", inputBuffer, IM_ARRAYSIZE(inputBuffer));
+        if(ImGui::Button(translate("cancel").c_str())){
+            play_click_sound();
+            stop_camera_movement = false;
+            inputBuffer[0] = '\0';
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::SameLine();
+        if(ImGui::Button(translate("add_object").c_str())){
+            play_click_sound();
+            string cube_name = string(inputBuffer);
+            if(cube_name != "") {
+                cubes[cube_name] = Cube{0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, "metal_tex"};
+            }
+            stop_camera_movement = false;
+            inputBuffer[0] = '\0';
+            ImGui::CloseCurrentPopup();
         }
         ImGui::EndPopup();
     }

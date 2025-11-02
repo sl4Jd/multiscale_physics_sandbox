@@ -69,6 +69,9 @@ bool stop_camera_movement = false;
 
 extern GLFWwindow* main_window;
 
+unordered_map<string, Cube> cubes;
+unordered_map<string, Plane> planes;
+
 
 extern unsigned int VAO_cube, VBO_cube;
 extern unsigned int VAO_plane, VBO_plane;
@@ -264,8 +267,6 @@ void StartNewProject()
     //textura ce biti fucked ako se ne flipuje za modele
 
     map<string, Model*> sceneModels;
-    unordered_map<string, Cube> cubes;
-    unordered_map<string, Plane> planes;
     for (const auto& obj : objects) {
         if (obj.type == "model") {
             stbi_set_flip_vertically_on_load(true);
