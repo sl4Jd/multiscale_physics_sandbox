@@ -37,6 +37,8 @@ static string language = "";
 
 static bool show_cube_popup = false;
 
+static bool show_plane_popup = false;
+
 static ImGuiID some_hovered = 0;
 static ImGuiID some_was_hovered = 0;
 
@@ -98,6 +100,8 @@ void Toolbar(){
         ImGui::SameLine();
         if(ImGui::Button(translate("plane").c_str(), ImVec2(100,70))){
             play_click_sound();
+            ImGui::CloseCurrentPopup();
+            show_plane_popup = true;
         }
         if (ImGui::IsItemHovered()) {
             ImGuiID id = ImGui::GetItemID();
@@ -128,6 +132,10 @@ void Toolbar(){
     if(show_cube_popup) {
         ImGui::OpenPopup(translate("cube").c_str());
         show_cube_popup = false;
+    }
+    if(show_plane_popup) {
+        ImGui::OpenPopup(translate("plane").c_str());
+        show_plane_popup = false;
     }
     ImGui::SetNextWindowSize(ImVec2(500, 250), ImGuiCond_Always);
     if(ImGui::BeginPopupModal(translate("menu.settings").c_str())) {
@@ -222,7 +230,30 @@ void Toolbar(){
             play_click_sound();
             string cube_name = string(inputBuffer);
             if(cube_name != "") {
-                cubes[cube_name] = Cube{0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, "metal_tex"};
+                cubes[cube_name] = Cube{0.0f, 0.0f, 5.0f, 1.0f, 1.0f, 1.0f, "metal_tex"};
+            }
+            stop_camera_movement = false;
+            inputBuffer[0] = '\0';
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
+    }
+    if(ImGui::BeginPopupModal(translate("plane").c_str())) {
+        ImGui::Text((translate("name")+": ").c_str());
+        ImGui::SameLine();
+        ImGui::InputText("##InputName", inputBuffer, IM_ARRAYSIZE(inputBuffer));
+        if(ImGui::Button(translate("cancel").c_str())){
+            play_click_sound();
+            stop_camera_movement = false;
+            inputBuffer[0] = '\0';
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::SameLine();
+        if(ImGui::Button(translate("add_object").c_str())){
+            play_click_sound();
+            string plane_name = string(inputBuffer);
+            if(plane_name != "") {
+                planes[plane_name] = Plane{0.0f, 0.0f, 5.0f, 1.0f, 1.0f, 1.0f, "metal_tex"};
             }
             stop_camera_movement = false;
             inputBuffer[0] = '\0';

@@ -454,21 +454,24 @@ void StartNewProject()
 
 void processInput(GLFWwindow* window)
 {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
-        //save and quit
-        SaveProject(project_settings["name"]);
-        filesystem::remove_all("user_data/projects/working");
-        glfwSetWindowShouldClose(window, true);
-    }
+    if(!stop_camera_movement) {
+        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
+            //save and quit
+            SaveProject(project_settings["name"]);
+            filesystem::remove_all("user_data/projects/working");
+            glfwSetWindowShouldClose(window, true);
+        }
 
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera.ProcessKeyboard(FORWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.ProcessKeyboard(BACKWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera.ProcessKeyboard(LEFT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.ProcessKeyboard(RIGHT, deltaTime);
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+            camera.ProcessKeyboard(FORWARD, deltaTime);
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+            camera.ProcessKeyboard(BACKWARD, deltaTime);
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+            camera.ProcessKeyboard(LEFT, deltaTime);
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+            camera.ProcessKeyboard(RIGHT, deltaTime);
+    }
+    
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
